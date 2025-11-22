@@ -3,10 +3,12 @@ import { useOffline } from "@/contexts/OfflineContext";
 import { WifiOff } from "lucide-react";
 import L from "leaflet";
 import "leaflet.markercluster";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { Button } from "@/components/ui/button";
+import { Map, Globe, Mountain } from "lucide-react";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -16,11 +18,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
+type MapLayer = "street" | "satellite" | "terrain";
+
 const CitizenMap = () => {
   const { reports } = useReports();
   const { isOffline } = useOffline();
   const mapRef = useRef<L.Map | null>(null);
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
+  const tileLayersRef = useRef<Record<MapLayer, L.TileLayer>>({} as Record<MapLayer, L.TileLayer>);
+  const [activeLayer, setActiveLayer] = useState<MapLayer>("street");
 
   const getMarkerIcon = (priority: string, status: string) => {
     let color = "#3b82f6"; // default blue
@@ -43,9 +49,28 @@ const CitizenMap = () => {
     
     const map = L.map('citizen-map-view').setView([42.6026, 20.9030], 12);
     
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Create different tile layers
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri'
+    });
+
+    const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+    });
+
+    // Store layers in ref
+    tileLayersRef.current = {
+      street: streetLayer,
+      satellite: satelliteLayer,
+      terrain: terrainLayer
+    };
+
+    // Add default layer
+    streetLayer.addTo(map);
 
     // Create marker cluster group with custom options
     const markerCluster = L.markerClusterGroup({
@@ -139,6 +164,19 @@ const CitizenMap = () => {
     });
   }, [reports, isOffline]);
 
+  // Handle layer switching
+  const switchLayer = (layer: MapLayer) => {
+    if (!mapRef.current || isOffline) return;
+    
+    // Remove current layer
+    tileLayersRef.current[activeLayer]?.remove();
+    
+    // Add new layer
+    tileLayersRef.current[layer]?.addTo(mapRef.current);
+    
+    setActiveLayer(layer);
+  };
+
   if (isOffline) {
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-xl border border-border bg-muted md:h-[500px]">
@@ -155,6 +193,37 @@ const CitizenMap = () => {
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+      {/* Map Layer Controls */}
+      <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-2">
+        <Button
+          variant={activeLayer === "street" ? "default" : "outline"}
+          size="icon"
+          onClick={() => switchLayer("street")}
+          className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg"
+          title="Street View"
+        >
+          <Map className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={activeLayer === "satellite" ? "default" : "outline"}
+          size="icon"
+          onClick={() => switchLayer("satellite")}
+          className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg"
+          title="Satellite View"
+        >
+          <Globe className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={activeLayer === "terrain" ? "default" : "outline"}
+          size="icon"
+          onClick={() => switchLayer("terrain")}
+          className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg"
+          title="Terrain View"
+        >
+          <Mountain className="h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Legend */}
       <div className="absolute right-4 top-4 z-[1000] rounded-lg border border-border bg-card/95 p-3 shadow-lg backdrop-blur-sm">
         <h3 className="mb-2 text-sm font-semibold">Priority Levels</h3>

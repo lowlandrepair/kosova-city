@@ -17,6 +17,7 @@ const CitizenMap = () => {
   const { reports } = useReports();
   const { isOffline } = useOffline();
   const mapRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
 
   const getMarkerIcon = (priority: string, status: string) => {
     let color = "#3b82f6"; // default blue
@@ -33,22 +34,35 @@ const CitizenMap = () => {
     });
   };
 
+  // Initialize map once
   useEffect(() => {
-    if (isOffline || !mapRef.current) return;
+    if (isOffline || mapRef.current) return;
+    
+    const map = L.map('citizen-map-view').setView([42.6026, 20.9030], 12);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-    // Initialize map
-    if (!mapRef.current) {
-      const map = L.map('citizen-map-view').setView([42.6026, 20.9030], 12); // Kosovo (Pristina)
-      
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+    mapRef.current = map;
 
-      mapRef.current = map;
-    }
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [isOffline]);
 
-    // Add markers
-    const markers: L.Marker[] = [];
+  // Add/update markers when reports change
+  useEffect(() => {
+    if (!mapRef.current || isOffline) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add new markers
     reports.forEach((report) => {
       const marker = L.marker(
         [report.coordinates.lat, report.coordinates.lng],
@@ -90,35 +104,15 @@ const CitizenMap = () => {
         </div>
       `);
       
-      if (mapRef.current) {
-        marker.addTo(mapRef.current);
-        markers.push(marker);
-      }
+      marker.addTo(mapRef.current!);
+      markersRef.current.push(marker);
     });
 
     return () => {
-      markers.forEach(m => m.remove());
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
     };
   }, [reports, isOffline]);
-
-  useEffect(() => {
-    if (!isOffline && !mapRef.current) {
-      const map = L.map('citizen-map-view').setView([42.6026, 20.9030], 12);
-      
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-
-      mapRef.current = map;
-    }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [isOffline]);
 
   if (isOffline) {
     return (

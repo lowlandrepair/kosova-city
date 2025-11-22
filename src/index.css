@@ -170,3 +170,50 @@ All colors MUST be HSL.
 
 /* Leaflet CSS Fix */
 @import "leaflet/dist/leaflet.css";
+
+/* Marker Cluster Styling */
+.marker-cluster-small {
+  background-color: rgba(59, 130, 246, 0.6);
+}
+
+.marker-cluster-small div {
+  background-color: rgba(59, 130, 246, 0.8);
+}
+
+.marker-cluster-medium {
+  background-color: rgba(245, 158, 11, 0.6);
+}
+
+.marker-cluster-medium div {
+  background-color: rgba(245, 158, 11, 0.8);
+}
+
+.marker-cluster-large {
+  background-color: rgba(239, 68, 68, 0.6);
+}
+
+.marker-cluster-large div {
+  background-color: rgba(239, 68, 68, 0.8);
+}
+
+.marker-cluster {
+  border-radius: 50%;
+}
+
+.marker-cluster div {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-cluster span {
+  line-height: 30px;
+}

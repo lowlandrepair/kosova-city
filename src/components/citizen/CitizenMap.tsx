@@ -2,8 +2,11 @@ import { useReports } from "@/contexts/ReportContext";
 import { useOffline } from "@/contexts/OfflineContext";
 import { WifiOff } from "lucide-react";
 import L from "leaflet";
+import "leaflet.markercluster";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -17,7 +20,7 @@ const CitizenMap = () => {
   const { reports } = useReports();
   const { isOffline } = useOffline();
   const mapRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
+  const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
 
   const getMarkerIcon = (priority: string, status: string) => {
     let color = "#3b82f6"; // default blue
@@ -44,25 +47,53 @@ const CitizenMap = () => {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // Create marker cluster group with custom options
+    const markerCluster = L.markerClusterGroup({
+      maxClusterRadius: 80,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      iconCreateFunction: function(cluster) {
+        const childCount = cluster.getChildCount();
+        let className = 'marker-cluster-';
+        
+        if (childCount < 5) {
+          className += 'small';
+        } else if (childCount < 10) {
+          className += 'medium';
+        } else {
+          className += 'large';
+        }
+        
+        return L.divIcon({
+          html: `<div><span>${childCount}</span></div>`,
+          className: 'marker-cluster ' + className,
+          iconSize: L.point(40, 40)
+        });
+      }
+    });
+
+    map.addLayer(markerCluster);
+    clusterGroupRef.current = markerCluster;
     mapRef.current = map;
 
     return () => {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
+        clusterGroupRef.current = null;
       }
     };
   }, [isOffline]);
 
   // Add/update markers when reports change
   useEffect(() => {
-    if (!mapRef.current || isOffline) return;
+    if (!clusterGroupRef.current || isOffline) return;
 
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker.remove());
-    markersRef.current = [];
+    // Clear existing markers from cluster group
+    clusterGroupRef.current.clearLayers();
 
-    // Add new markers
+    // Add new markers to cluster group
     reports.forEach((report) => {
       const marker = L.marker(
         [report.coordinates.lat, report.coordinates.lng],
@@ -104,14 +135,8 @@ const CitizenMap = () => {
         </div>
       `);
       
-      marker.addTo(mapRef.current!);
-      markersRef.current.push(marker);
+      clusterGroupRef.current.addLayer(marker);
     });
-
-    return () => {
-      markersRef.current.forEach(marker => marker.remove());
-      markersRef.current = [];
-    };
   }, [reports, isOffline]);
 
   if (isOffline) {

@@ -59,6 +59,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         upvotes: report.upvotes,
         imageUrl: report.image_url || "",
         userId: report.user_id,
+        estimatedCost: report.estimated_cost || 0,
       }));
 
       setReports(formattedReports);
@@ -133,6 +134,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         upvotes: data.upvotes,
         imageUrl: data.image_url || "",
         userId: data.user_id,
+        estimatedCost: data.estimated_cost || 0,
       };
 
       setReports((prev) => [newReport, ...prev]);
@@ -162,6 +164,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       }
       if (updates.upvotes !== undefined) updateData.upvotes = updates.upvotes;
       if (updates.imageUrl !== undefined) updateData.image_url = updates.imageUrl;
+      if (updates.estimatedCost !== undefined) updateData.estimated_cost = updates.estimatedCost;
 
       const { error } = await supabase
         .from("reports")

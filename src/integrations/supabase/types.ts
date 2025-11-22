@@ -79,7 +79,6 @@ export type Database = {
           lng: number
           priority: string
           status: string
-          tags: string[] | null
           title: string
           updated_at: string | null
           upvotes: number
@@ -96,7 +95,6 @@ export type Database = {
           lng: number
           priority?: string
           status?: string
-          tags?: string[] | null
           title: string
           updated_at?: string | null
           upvotes?: number
@@ -113,7 +111,6 @@ export type Database = {
           lng?: number
           priority?: string
           status?: string
-          tags?: string[] | null
           title?: string
           updated_at?: string | null
           upvotes?: number

@@ -18,5 +18,4 @@ export interface Report {
   imageUrl: string;
   userId?: string;
   estimatedCost: number;
-  tags?: string[];
 }

@@ -74,11 +74,6 @@ const AdminMap = () => {
                            padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500;">
                 ${report.status}
               </span>
-              ${report.tags && report.tags.length > 0 ? report.tags.map(tag => `
-                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500;">
-                  ${tag}
-                </span>
-              `).join('') : ''}
             </div>
           </div>
           <p style="font-size: 14px; color: #6b7280; margin-bottom: 12px;">${report.description}</p>

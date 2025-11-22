@@ -26,7 +26,6 @@ const ReportFlow = ({ onClose }: { onClose: () => void }) => {
     description: string;
     priority: ReportPriority;
     imageUrl: string;
-    tags?: string[];
   }) => {
     if (!coordinates) return;
 

@@ -65,11 +65,6 @@ const AdminOverview = () => {
             <p><strong>Category:</strong> ${report.category}</p>
             <p><strong>Priority:</strong> ${report.priority}</p>
             <p><strong>Status:</strong> ${report.status}</p>
-            ${report.tags && report.tags.length > 0 ? `
-              <div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;">
-                ${report.tags.map(tag => `<span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 9999px; font-size: 11px;">${tag}</span>`).join('')}
-              </div>
-            ` : ''}
             <p style="font-size: 12px; color: #666; margin-top: 4px;">${report.description}</p>
           </div>
         </div>

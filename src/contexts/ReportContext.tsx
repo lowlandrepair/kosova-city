@@ -61,7 +61,6 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         imageUrl: report.image_url || "",
         userId: report.user_id,
         estimatedCost: report.estimated_cost || 0,
-        tags: report.tags || [],
       }));
 
       setReports(formattedReports);
@@ -122,7 +121,6 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           lng: report.coordinates.lng,
           image_url: report.imageUrl,
           estimated_cost: estimatedCost,
-          tags: report.tags || [],
         })
         .select()
         .single();
@@ -142,7 +140,6 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         imageUrl: data.image_url || "",
         userId: data.user_id,
         estimatedCost: data.estimated_cost || 0,
-        tags: data.tags || [],
       };
 
       setReports((prev) => [newReport, ...prev]);

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Report } from "@/types/report";
+import CitizenMap from "./CitizenMap";
 
 interface ReportWithAuthor extends Report {
   authorName?: string;
@@ -126,6 +127,30 @@ const CitizenHome = () => {
                 <p className="text-sm text-muted-foreground">Resolved</p>
               </div>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Live Map Section */}
+      <section className="px-6 py-8">
+        <div className="mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-6"
+          >
+            <h2 className="mb-2 text-2xl font-bold">Live Community Map</h2>
+            <p className="text-sm text-muted-foreground">
+              See where reports are happening across the city
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <CitizenMap />
           </motion.div>
         </div>
       </section>

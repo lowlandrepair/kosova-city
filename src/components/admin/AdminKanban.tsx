@@ -127,6 +127,11 @@ const AdminKanban = () => {
                             >
                               {report.priority}
                             </Badge>
+                            {report.tags?.map((tag, i) => (
+                              <Badge key={i} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
                           </div>
 
                           {/* Description */}

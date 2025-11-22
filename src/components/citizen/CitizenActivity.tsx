@@ -116,6 +116,11 @@ const CitizenActivity = () => {
                       }`}>
                         {report.priority} Priority
                       </span>
+                      {report.tags?.map((tag, i) => (
+                        <span key={i} className="rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent-foreground">
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />

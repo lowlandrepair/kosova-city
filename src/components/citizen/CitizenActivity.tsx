@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, Clock, XCircle, AlertCircle, User, MapPin } from "lucide-react";
 import { useReports } from "@/contexts/ReportContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOffline } from "@/contexts/OfflineContext";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ interface ReportWithAuthor extends Report {
 const CitizenActivity = () => {
   const { reports } = useReports();
   const { user } = useAuth();
+  const { offlineQueue } = useOffline();
   const [reportsWithAuthors, setReportsWithAuthors] = useState<ReportWithAuthor[]>([]);
 
   useEffect(() => {
@@ -73,6 +75,42 @@ const CitizenActivity = () => {
             Track the status of your reports
           </p>
         </motion.div>
+
+        {/* Offline Queue */}
+        {offlineQueue.length > 0 && (
+          <div className="mb-6 space-y-4">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <span className="rounded-full bg-warning/10 px-3 py-1 text-sm font-medium text-warning">
+                ⚠️ Offline Queue ({offlineQueue.length})
+              </span>
+            </h2>
+            {offlineQueue.map((report) => (
+              <motion.div
+                key={report.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="rounded-xl border border-warning/20 bg-warning/5 p-6 shadow-sm"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="rounded-full bg-warning/20 px-3 py-1 text-xs font-medium text-warning">
+                    ⚠️ Saved Offline (Waiting for Connection)
+                  </span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                    {report.category}
+                  </span>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">{report.title}</h3>
+                <p className="mb-3 text-sm text-muted-foreground line-clamp-2">
+                  {report.description}
+                </p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>{format(new Date(report.timestamp), "MMM d, yyyy 'at' h:mm a")}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-6">
           {reportsWithAuthors.map((report, index) => {

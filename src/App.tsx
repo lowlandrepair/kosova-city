@@ -7,6 +7,7 @@ import { ReportProvider } from "@/contexts/ReportContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { OfflineProvider } from "@/contexts/OfflineContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Citizen from "./pages/Citizen";
@@ -22,33 +23,35 @@ const App = () => (
       <LanguageProvider>
         <BrowserRouter>
           <AuthProvider>
-            <ReportProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route
-                    path="/citizen"
-                    element={
-                      <ProtectedRoute>
-                        <Citizen />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin"
-                    element={
-                      <ProtectedRoute requireAdmin>
-                        <Admin />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </TooltipProvider>
-            </ReportProvider>
+            <OfflineProvider>
+              <ReportProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route
+                      path="/citizen"
+                      element={
+                        <ProtectedRoute>
+                          <Citizen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute requireAdmin>
+                          <Admin />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </TooltipProvider>
+              </ReportProvider>
+            </OfflineProvider>
           </AuthProvider>
         </BrowserRouter>
       </LanguageProvider>

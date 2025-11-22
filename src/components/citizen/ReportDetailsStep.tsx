@@ -17,6 +17,7 @@ interface ReportDetailsStepProps {
     description: string;
     priority: ReportPriority;
     imageUrl: string;
+    tags?: string[];
   }) => void;
   onBack: () => void;
 }
@@ -44,63 +45,83 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
   const handleAIEnhance = async () => {
     if (!description.trim()) {
       toast({
-        title: "No description to enhance",
+        title: "No description",
         description: "Please enter a description first",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     setIsEnhancing(true);
-    
     try {
       const { data, error } = await supabase.functions.invoke('enhance-description', {
-        body: { description, category }
+        body: { description, category, title }
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
+      if (error) throw error;
 
       if (data?.enhancedDescription) {
         setDescription(data.enhancedDescription);
+        
+        // Auto-set priority from AI suggestion
+        if (data.suggestedPriority) {
+          setPriority(data.suggestedPriority);
+        }
+        
         toast({
-          title: "✨ Description enhanced!",
-          description: "Your report has been professionally formatted with AI"
+          title: "AI Analysis Complete!",
+          description: `Description enhanced, priority set to ${data.suggestedPriority || priority}${data.tags?.length > 0 ? `, and ${data.tags.length} tag(s) added` : ''}`,
         });
       }
     } catch (error: any) {
-      console.error("Error enhancing description:", error);
+      console.error('Error enhancing description:', error);
       toast({
         title: "Enhancement failed",
-        description: error.message || "Could not enhance description. Please try again.",
-        variant: "destructive"
+        description: error.message || "Failed to enhance description",
+        variant: "destructive",
       });
     } finally {
       setIsEnhancing(false);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) {
       toast({
         title: "Missing information",
         description: "Please fill in all required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
+    // Get AI analysis if description is not already enhanced
+    let finalPriority = priority;
+    let tags: string[] = [];
+    
+    try {
+      const { data } = await supabase.functions.invoke('enhance-description', {
+        body: { description, category, title }
+      });
+      
+      if (data?.suggestedPriority) {
+        finalPriority = data.suggestedPriority;
+      }
+      if (data?.tags) {
+        tags = data.tags;
+      }
+    } catch (error) {
+      console.error('Error getting AI analysis:', error);
+      // Continue with user-selected priority if AI fails
+    }
+
     onSubmit({
-      title: title.trim(),
+      title,
       category,
-      description: description.trim(),
-      priority,
-      imageUrl: imagePreview || "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400"
+      description,
+      priority: finalPriority,
+      imageUrl: imagePreview || "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400",
+      tags,
     });
   };
 

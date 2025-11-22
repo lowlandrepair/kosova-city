@@ -26,15 +26,16 @@ export const EditReportModal = ({ report, open, onClose, onSave }: EditReportMod
 
   useEffect(() => {
     if (report) {
+      const cost = report.estimatedCost || COST_ESTIMATES[report.category];
       setFormData({
         title: report.title,
         category: report.category,
         description: report.description,
         status: report.status,
         priority: report.priority,
-        estimatedCost: report.estimatedCost,
+        estimatedCost: cost,
       });
-      setPrevCost(report.estimatedCost);
+      setPrevCost(cost);
     }
   }, [report]);
 

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Report, ReportStatus } from "@/types/report";
 import { toast } from "@/hooks/use-toast";
+import { COST_ESTIMATES } from "@/constants/costEstimates";
 
 interface ReportContextType {
   reports: Report[];
@@ -104,6 +105,9 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
 
     try {
+      // Auto-calculate estimated cost based on category
+      const estimatedCost = COST_ESTIMATES[report.category];
+      
       const { data, error } = await supabase
         .from("reports")
         .insert({
@@ -116,6 +120,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           lat: report.coordinates.lat,
           lng: report.coordinates.lng,
           image_url: report.imageUrl,
+          estimated_cost: estimatedCost,
         })
         .select()
         .single();

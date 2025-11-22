@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { ReportCategory, ReportPriority } from "@/types/report";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ReportDetailsStepProps {
   onSubmit: (details: {
@@ -40,7 +41,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
     }
   };
 
-  const handleAIEnhance = () => {
+  const handleAIEnhance = async () => {
     if (!description.trim()) {
       toast({
         title: "No description to enhance",
@@ -52,16 +53,36 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
 
     setIsEnhancing(true);
     
-    // Simulate AI enhancement
-    setTimeout(() => {
-      const enhanced = `This is a formal complaint regarding ${category.toLowerCase()} issues. ${description}. This matter requires immediate attention from the relevant municipal authorities to ensure public safety and maintain city infrastructure standards. Prompt resolution would be greatly appreciated by the community.`;
-      setDescription(enhanced);
-      setIsEnhancing(false);
-      toast({
-        title: "✨ Description enhanced!",
-        description: "Your report has been professionally formatted"
+    try {
+      const { data, error } = await supabase.functions.invoke('enhance-description', {
+        body: { description, category }
       });
-    }, 1500);
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      if (data?.enhancedDescription) {
+        setDescription(data.enhancedDescription);
+        toast({
+          title: "✨ Description enhanced!",
+          description: "Your report has been professionally formatted with AI"
+        });
+      }
+    } catch (error: any) {
+      console.error("Error enhancing description:", error);
+      toast({
+        title: "Enhancement failed",
+        description: error.message || "Could not enhance description. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEnhancing(false);
+    }
   };
 
   const handleSubmit = () => {

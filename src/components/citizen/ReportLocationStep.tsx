@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { WifiOff } from "lucide-react";
+import { useOffline } from "@/contexts/OfflineContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -21,37 +23,38 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
   const [position, setPosition] = useState({ lat: 42.6026, lng: 20.9030 }); // Kosovo (Pristina) default
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const { isOffline } = useOffline();
 
   useEffect(() => {
-    if (!mapRef.current) {
-      const map = L.map("report-location-map").setView([position.lat, position.lng], 13);
+    if (isOffline || mapRef.current) return;
+    
+    const map = L.map("report-location-map").setView([position.lat, position.lng], 13);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
 
-      // Create initial marker
-      const marker = L.marker([position.lat, position.lng], {
-        draggable: true,
-      }).addTo(map);
+    // Create initial marker
+    const marker = L.marker([position.lat, position.lng], {
+      draggable: true,
+    }).addTo(map);
 
-      // Update position when marker is dragged
-      marker.on("dragend", () => {
-        const pos = marker.getLatLng();
-        setPosition({ lat: pos.lat, lng: pos.lng });
-      });
+    // Update position when marker is dragged
+    marker.on("dragend", () => {
+      const pos = marker.getLatLng();
+      setPosition({ lat: pos.lat, lng: pos.lng });
+    });
 
-      // Add click event to place marker
-      map.on("click", (e: L.LeafletMouseEvent) => {
-        const { lat, lng } = e.latlng;
-        setPosition({ lat, lng });
-        marker.setLatLng([lat, lng]);
-      });
+    // Add click event to place marker
+    map.on("click", (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      setPosition({ lat, lng });
+      marker.setLatLng([lat, lng]);
+    });
 
-      mapRef.current = map;
-      markerRef.current = marker;
-    }
+    mapRef.current = map;
+    markerRef.current = marker;
 
     return () => {
       if (mapRef.current) {
@@ -60,7 +63,7 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
       }
       markerRef.current = null;
     };
-  }, []);
+  }, [isOffline]);
 
   return (
     <motion.div
@@ -78,7 +81,19 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
 
       {/* Map Container */}
       <div className="relative flex-1">
-        <div id="report-location-map" className="h-full w-full" />
+        {isOffline ? (
+          <div className="flex h-full w-full items-center justify-center bg-muted">
+            <div className="space-y-4 text-center">
+              <WifiOff className="mx-auto h-16 w-16 text-muted-foreground" />
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Map Unavailable Offline</h3>
+                <p className="text-sm text-muted-foreground">The map will be available when you're back online</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div id="report-location-map" className="h-full w-full" />
+        )}
 
         {/* Coordinates Display */}
         <div className="absolute bottom-4 left-4 z-[1000] rounded-lg bg-card/95 px-4 py-2 shadow-lg backdrop-blur-sm">

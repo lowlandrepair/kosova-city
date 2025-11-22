@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Report, ReportStatus } from "@/types/report";
 import { toast } from "@/hooks/use-toast";
 import { COST_ESTIMATES } from "@/constants/costEstimates";
+import { useOffline } from "@/contexts/OfflineContext";
 
 interface ReportContextType {
   reports: Report[];
@@ -24,6 +25,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [isLoading, setIsLoading] = useState(true);
   const [userUpvotedReports, setUserUpvotedReports] = useState<Set<string>>(new Set());
   const { user } = useAuth();
+  const { isOffline, addToOfflineQueue, offlineQueue, syncOfflineReports, isSyncing } = useOffline();
 
   // Fetch reports from Supabase
   useEffect(() => {
@@ -104,6 +106,25 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       return;
     }
 
+    // If offline mode, save to queue instead
+    if (isOffline) {
+      addToOfflineQueue({
+        title: report.title,
+        category: report.category,
+        description: report.description,
+        priority: report.priority,
+        coordinates: report.coordinates,
+        imageUrl: report.imageUrl,
+      });
+      
+      toast({
+        title: "Saved Offline",
+        description: "Report will be submitted when connection is restored.",
+        className: "bg-warning text-warning-foreground",
+      });
+      return;
+    }
+
     try {
       // Auto-calculate estimated cost based on category
       const estimatedCost = COST_ESTIMATES[report.category];
@@ -153,6 +174,65 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       throw error;
     }
   };
+
+  // Sync offline reports when coming back online
+  useEffect(() => {
+    const handleSync = async () => {
+      if (!isOffline && offlineQueue.length > 0 && user) {
+        const reportsToSync = await syncOfflineReports();
+        
+        // Add each offline report to the database
+        for (const offlineReport of reportsToSync) {
+          try {
+            const estimatedCost = COST_ESTIMATES[offlineReport.category as Report["category"]];
+            
+            const { data, error } = await supabase
+              .from("reports")
+              .insert({
+                user_id: user.id,
+                title: offlineReport.title,
+                category: offlineReport.category,
+                description: offlineReport.description,
+                status: "Pending",
+                priority: offlineReport.priority,
+                lat: offlineReport.coordinates.lat,
+                lng: offlineReport.coordinates.lng,
+                image_url: offlineReport.imageUrl,
+                estimated_cost: estimatedCost,
+              })
+              .select()
+              .single();
+
+            if (error) throw error;
+
+            const newReport: Report = {
+              id: data.id,
+              title: data.title,
+              category: data.category as Report["category"],
+              description: data.description,
+              status: data.status as Report["status"],
+              priority: data.priority as Report["priority"],
+              coordinates: { lat: data.lat, lng: data.lng },
+              timestamp: data.created_at,
+              upvotes: data.upvotes,
+              imageUrl: data.image_url || "",
+              userId: data.user_id,
+              estimatedCost: data.estimated_cost || 0,
+            };
+
+            setReports((prev) => [newReport, ...prev]);
+          } catch (error: any) {
+            console.error("Error syncing offline report:", error);
+          }
+        }
+        
+        // Refresh all reports after sync
+        fetchReports();
+      }
+    };
+
+    handleSync();
+  }, [isOffline]);
 
   const updateReport = async (id: string, updates: Partial<Report>) => {
     try {

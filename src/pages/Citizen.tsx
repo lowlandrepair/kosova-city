@@ -7,6 +7,7 @@ import CitizenHome from "@/components/citizen/CitizenHome";
 import CitizenActivity from "@/components/citizen/CitizenActivity";
 import ReportFlow from "@/components/citizen/ReportFlow";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
+import { NetworkToggle } from "@/components/NetworkToggle";
 
 type CitizenTab = "home" | "activity" | "report";
 
@@ -52,51 +53,52 @@ const Citizen = () => {
       {/* Bottom Navigation (Mobile) */}
       {!showReportFlow && (
         <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-sm md:hidden">
-          <div className="flex items-center justify-between px-2 py-3">
+          <div className="flex items-center justify-between px-2 py-2">
             <div className="flex gap-1 flex-1">
               <button
                 onClick={() => navigate("/")}
-                className="flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-muted"
+                className="flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-muted-foreground transition-colors hover:bg-muted"
               >
-                <ArrowLeft className="h-5 w-5" />
-                <span className="text-xs font-medium">{t("common.back")}</span>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="text-[10px] font-medium">{t("common.back")}</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("home")}
-                className={`flex flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors ${
+                className={`flex flex-col items-center gap-1 rounded-lg px-2 py-1 transition-colors ${
                   activeTab === "home"
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted"
                 }`}
               >
-                <Home className="h-5 w-5" />
-                <span className="text-xs font-medium">{t("citizen.home")}</span>
+                <Home className="h-4 w-4" />
+                <span className="text-[10px] font-medium">{t("citizen.home")}</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("activity")}
-                className={`flex flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors ${
+                className={`flex flex-col items-center gap-1 rounded-lg px-2 py-1 transition-colors ${
                   activeTab === "activity"
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted"
                 }`}
               >
-                <FileText className="h-5 w-5" />
-                <span className="text-xs font-medium">{t("citizen.myActivity")}</span>
+                <FileText className="h-4 w-4" />
+                <span className="text-[10px] font-medium">{t("citizen.myActivity")}</span>
               </button>
 
               <button
                 onClick={() => setShowReportFlow(true)}
-                className="flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-muted"
+                className="flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-muted-foreground transition-colors hover:bg-muted"
               >
-                <Plus className="h-5 w-5" />
-                <span className="text-xs font-medium">{t("citizen.reportIssue")}</span>
+                <Plus className="h-4 w-4" />
+                <span className="text-[10px] font-medium">{t("citizen.reportIssue")}</span>
               </button>
             </div>
             
             {/* Profile Dropdown for Mobile */}
-            <div className="flex-shrink-0 pl-2 border-l border-border">
+            <div className="flex items-center gap-2 flex-shrink-0 pl-2 border-l border-border">
+              <NetworkToggle />
               <ProfileDropdown />
             </div>
           </div>
@@ -156,7 +158,8 @@ const Citizen = () => {
               </button>
             </div>
 
-            <div className="border-t border-border p-6">
+            <div className="border-t border-border p-6 space-y-4">
+              <NetworkToggle />
               <div className="flex items-center justify-center">
                 <ProfileDropdown />
               </div>

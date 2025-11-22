@@ -5,7 +5,7 @@ import { Report, ReportStatus } from "@/types/report";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Clock, CheckCircle2, Trash2, Edit } from "lucide-react";
+import { AlertCircle, Clock, CheckCircle2, Trash2, Edit, X } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { EditReportModal } from "./EditReportModal";
@@ -19,6 +19,7 @@ const AdminKanban = () => {
     { status: "Pending", title: "Pending Review", icon: AlertCircle, color: "text-destructive" },
     { status: "In Progress", title: "Dispatched", icon: Clock, color: "text-warning" },
     { status: "Resolved", title: "Resolved", icon: CheckCircle2, color: "text-success" },
+    { status: "Rejected", title: "Rejected", icon: X, color: "text-muted-foreground" },
   ];
 
   const getAIInsight = (report: Report) => {

@@ -44,8 +44,8 @@ export const EditReportModal = ({ report, open, onClose, onSave }: EditReportMod
     setFormData({ ...formData, category, estimatedCost: newCost });
   };
 
-  const handleCostChange = (value: string) => {
-    const numValue = parseFloat(value) || 0;
+  const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numValue = parseFloat(e.target.value) || 0;
     setFormData({ ...formData, estimatedCost: numValue });
   };
 
@@ -139,23 +139,21 @@ export const EditReportModal = ({ report, open, onClose, onSave }: EditReportMod
             <Label htmlFor="cost">Projected Cost</Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={formData.estimatedCost}
-                  initial={{ opacity: 0.5, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Input
-                    id="cost"
-                    type="number"
-                    step="0.01"
-                    className="pl-7"
-                    value={formData.estimatedCost?.toFixed(2) || "0.00"}
-                    onChange={(e) => handleCostChange(e.target.value)}
-                  />
-                </motion.div>
-              </AnimatePresence>
+              <motion.div
+                key={formData.estimatedCost}
+                initial={{ scale: 1.05 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              >
+                <Input
+                  id="cost"
+                  type="number"
+                  step="0.01"
+                  className="pl-7"
+                  value={(formData.estimatedCost || 0).toFixed(2)}
+                  onChange={handleCostChange}
+                />
+              </motion.div>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Auto-calculated based on category. You can override this value.

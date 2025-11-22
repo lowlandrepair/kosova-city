@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, Clock, CheckCircle2, Trash2, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { EditReportModal } from "./EditReportModal";
 
 const AdminKanban = () => {
   const { reports, updateReport, deleteReport } = useReports();
   const { toast } = useToast();
+  const [editingReport, setEditingReport] = useState<Report | null>(null);
 
   const columns: { status: ReportStatus; title: string; icon: any; color: string }[] = [
     { status: "Pending", title: "Pending Review", icon: AlertCircle, color: "text-destructive" },
@@ -45,6 +47,18 @@ const AdminKanban = () => {
       title: "Report deleted",
       description: "The report has been removed",
       variant: "destructive",
+    });
+  };
+
+  const handleEdit = (report: Report) => {
+    setEditingReport(report);
+  };
+
+  const handleSaveEdit = (id: string, updates: Partial<Report>) => {
+    updateReport(id, updates);
+    toast({
+      title: "Report updated",
+      description: "Changes have been saved",
     });
   };
 
@@ -135,34 +149,15 @@ const AdminKanban = () => {
 
                           {/* Actions */}
                           <div className="flex gap-2">
-                            {column.status === "Pending" && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleStatusChange(report.id, "In Progress")}
-                                className="flex-1"
-                              >
-                                Dispatch
-                              </Button>
-                            )}
-                            {column.status === "In Progress" && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleStatusChange(report.id, "Resolved")}
-                                className="flex-1 bg-success hover:bg-success/90"
-                              >
-                                Resolve
-                              </Button>
-                            )}
-                            {column.status === "Resolved" && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleStatusChange(report.id, "Pending")}
-                                variant="outline"
-                                className="flex-1"
-                              >
-                                Reopen
-                              </Button>
-                            )}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(report)}
+                              className="flex-1"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
                             <Button
                               size="sm"
                               variant="destructive"
@@ -181,6 +176,13 @@ const AdminKanban = () => {
           })}
         </div>
       </div>
+
+      <EditReportModal
+        report={editingReport}
+        open={!!editingReport}
+        onClose={() => setEditingReport(null)}
+        onSave={handleSaveEdit}
+      />
     </div>
   );
 };

@@ -17,4 +17,5 @@ export interface Report {
   upvotes: number;
   imageUrl: string;
   userId?: string;
+  estimatedCost: number;
 }

@@ -32,7 +32,8 @@ const ReportFlow = ({ onClose }: { onClose: () => void }) => {
     addReport({
       ...details,
       coordinates,
-      status: "Pending"
+      status: "Pending",
+      estimatedCost: 0,
     });
 
     // Trigger confetti

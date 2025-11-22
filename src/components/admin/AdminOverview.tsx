@@ -1,9 +1,10 @@
 import { useReports } from "@/contexts/ReportContext";
-import { AlertCircle, Clock, CheckCircle2, TrendingUp } from "lucide-react";
+import { AlertCircle, Clock, CheckCircle2, TrendingUp, DollarSign } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import { motion } from "framer-motion";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -21,6 +22,10 @@ const AdminOverview = () => {
   const pendingCount = reports.filter(r => r.status === "Pending").length;
   const inProgressCount = reports.filter(r => r.status === "In Progress").length;
   const resolvedCount = reports.filter(r => r.status === "Resolved").length;
+  
+  // Calculate total budget for active reports
+  const totalBudget = activeReports.reduce((sum, report) => sum + (report.estimatedCost || 0), 0);
+  const isHighBudget = totalBudget > 10000;
 
   // Custom marker icons based on priority
   const getMarkerIcon = (priority: string) => {
@@ -86,6 +91,26 @@ const AdminOverview = () => {
       <div className="flex h-[calc(100vh-113px)] gap-6 p-6">
         {/* Stats Sidebar */}
         <div className="w-80 space-y-4 overflow-y-auto">
+          <Card className={`border-l-4 p-6 ${isHighBudget ? 'border-l-destructive' : 'border-l-success'}`}>
+            <div className="flex items-center gap-4">
+              <div className={`rounded-lg p-3 ${isHighBudget ? 'bg-destructive/10' : 'bg-success/10'}`}>
+                <DollarSign className={`h-6 w-6 ${isHighBudget ? 'text-destructive' : 'text-success'}`} />
+              </div>
+              <div>
+                <motion.p 
+                  key={totalBudget}
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className={`text-3xl font-bold ${isHighBudget ? 'text-destructive' : 'text-success'}`}
+                >
+                  ${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </motion.p>
+                <p className="text-sm text-muted-foreground">Total Budget Required</p>
+              </div>
+            </div>
+          </Card>
+
           <Card className="border-l-4 border-l-destructive p-6">
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-destructive/10 p-3">

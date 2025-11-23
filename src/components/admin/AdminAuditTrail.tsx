@@ -7,6 +7,7 @@ import { Search, ExternalLink } from "lucide-react";
 import { getLogs } from "@/lib/auditLogger";
 import { AuditLog, AuditAction, AuditCategory } from "@/types/auditLog";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminAuditTrailProps {
   onNavigateToReport?: (reportId: string) => void;
@@ -19,14 +20,32 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   useEffect(() => {
-    setLogs(getLogs());
+    const fetchLogs = async () => {
+      const fetchedLogs = await getLogs();
+      setLogs(fetchedLogs);
+    };
     
-    // Refresh logs every 2 seconds to catch new activity
-    const interval = setInterval(() => {
-      setLogs(getLogs());
-    }, 2000);
+    fetchLogs();
     
-    return () => clearInterval(interval);
+    // Set up real-time subscription for new logs
+    const channel = supabase
+      .channel("audit_logs_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "audit_logs",
+        },
+        () => {
+          fetchLogs(); // Refetch logs when changes occur
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getActionBadgeColor = (action: AuditAction) => {

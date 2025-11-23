@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          actor: string
+          category: string
+          created_at: string | null
+          details: string
+          id: string
+          log_id: string
+          target_id: string
+          target_title: string
+          timestamp: string
+        }
+        Insert: {
+          action: string
+          actor: string
+          category: string
+          created_at?: string | null
+          details: string
+          id?: string
+          log_id: string
+          target_id: string
+          target_title: string
+          timestamp?: string
+        }
+        Update: {
+          action?: string
+          actor?: string
+          category?: string
+          created_at?: string | null
+          details?: string
+          id?: string
+          log_id?: string
+          target_id?: string
+          target_title?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null

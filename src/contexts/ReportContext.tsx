@@ -39,6 +39,26 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   // Fetch reports from Supabase
   useEffect(() => {
     fetchReports();
+    
+    // Set up real-time subscription for reports
+    const channel = supabase
+      .channel("reports_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reports",
+        },
+        () => {
+          fetchReports(); // Refetch reports when changes occur
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Fetch user's upvoted reports

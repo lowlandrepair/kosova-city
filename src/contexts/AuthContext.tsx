@@ -25,14 +25,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isInitialLoad = true; // Track initial session restoration
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Log login/logout events
-        if (event === "SIGNED_IN" && session?.user) {
+        // Only log actual logins, not session restorations
+        if (event === "SIGNED_IN" && session?.user && !isInitialLoad) {
           logActivity(
             "LOGIN",
             session.user.email || `User #${session.user.id.slice(0, 8)}`,
@@ -54,10 +56,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setProfile(null);
           setIsLoading(false);
         }
+        
+        // Mark initial load as complete
+        if (isInitialLoad) {
+          isInitialLoad = false;
+        }
       }
     );
 
-    // Check for existing session
+    // Check for existing session (don't log this as a login)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);

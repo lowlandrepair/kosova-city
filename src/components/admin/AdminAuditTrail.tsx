@@ -33,6 +33,7 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
     switch (action) {
       case "REPORTED":
       case "LOGIN":
+      case "SIGNUP":
         return "bg-success/10 text-success border-success/20";
       case "STATUS_CHANGE":
       case "EDITED_REPORT":

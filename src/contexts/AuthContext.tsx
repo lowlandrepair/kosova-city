@@ -108,6 +108,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error fetching profile:", error);
       } else if (data) {
         setProfile(data);
+        console.log("Profile loaded:", data);
+      } else {
+        console.log("No profile found for user:", userId);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);

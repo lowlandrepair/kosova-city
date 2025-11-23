@@ -5,7 +5,8 @@ export type AuditAction =
   | "DELETED" 
   | "LOGIN" 
   | "LOGOUT" 
-  | "SYSTEM_REPORT";
+  | "SYSTEM_REPORT"
+  | "SIGNUP";
 
 export type AuditCategory = 
   | "USER_SUBMISSION" 

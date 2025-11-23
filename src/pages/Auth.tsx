@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { logActivity } from "@/lib/auditLogger";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { LogIn, UserPlus, MapPin } from "lucide-react";
@@ -107,6 +108,16 @@ const Auth = () => {
               display_name: validatedData.name,
             })
           ]);
+
+          // Log the signup event
+          logActivity(
+            "SIGNUP",
+            validatedData.email,
+            authData.user.id,
+            "New User Registration",
+            `New user account created with name: ${validatedData.name}`,
+            "SYSTEM"
+          );
 
           toast({
             title: "Account created!",

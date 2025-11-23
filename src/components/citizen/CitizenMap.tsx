@@ -113,7 +113,16 @@ const CitizenMap = () => {
 
   // Add/update markers when reports change
   useEffect(() => {
-    if (!clusterGroupRef.current || isOffline) return;
+    if (!clusterGroupRef.current || isOffline) {
+      console.log('CitizenMap: Cannot add markers', { 
+        hasClusterGroup: !!clusterGroupRef.current, 
+        isOffline,
+        reportsCount: reports.length 
+      });
+      return;
+    }
+
+    console.log('CitizenMap: Adding markers', { reportsCount: reports.length });
 
     // Clear existing markers from cluster group
     clusterGroupRef.current.clearLayers();

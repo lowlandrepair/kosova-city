@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,213 +8,180 @@ All colors MUST be HSL.
 */
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
-
-    /* Vibrant Purple/Cyan Tech Theme */
-    --primary: 265 85% 58%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 265 85% 70%;
-
-    --secondary: 190 95% 45%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-
-    --accent: 190 95% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 265 85% 58%;
-
-    --radius: 0.75rem;
-
-    /* Tech Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(265 85% 58%), hsl(190 95% 45%));
-    --gradient-hero: linear-gradient(135deg, hsl(265 85% 58%) 0%, hsl(190 95% 45%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(265 85% 58%), hsl(280 85% 60%), hsl(190 95% 45%));
-    
-    /* Shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(265 85% 58% / 0.3);
-    --shadow-glow: 0 0 40px hsl(265 85% 58% / 0.4);
-    --shadow-lg: 0 20px 50px -12px hsl(0 0% 0% / 0.25);
-
-    /* Admin Sidebar */
-    --sidebar-background: 240 10% 10%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 265 85% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 8% 15%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 8% 15%;
-    --sidebar-ring: 265 85% 58%;
-  }
-
-  .dark {
-    --background: 240 10% 10%;
-    --foreground: 240 5% 96%;
-
-    --card: 240 8% 15%;
-    --card-foreground: 240 5% 96%;
-
-    --popover: 240 8% 15%;
-    --popover-foreground: 240 5% 96%;
-
-    --primary: 265 85% 58%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 265 85% 70%;
-
-    --secondary: 190 95% 45%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 240 8% 15%;
-    --muted-foreground: 240 5% 65%;
-
-    --accent: 190 95% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 240 5% 96%;
-
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 240 8% 20%;
-    --input: 240 8% 20%;
-    --ring: 265 85% 58%;
-
-    /* Dark mode tech gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(265 85% 58%), hsl(190 95% 45%));
-    --gradient-hero: linear-gradient(135deg, hsl(265 85% 58%) 0%, hsl(190 95% 45%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(265 85% 58%), hsl(280 85% 60%), hsl(190 95% 45%));
-
-    /* Dark shadows with glow */
-    --shadow-elegant: 0 10px 30px -10px hsl(265 85% 58% / 0.5);
-    --shadow-glow: 0 0 50px hsl(265 85% 58% / 0.6);
-    --shadow-lg: 0 20px 50px -12px hsl(0 0% 0% / 0.7);
-
-    --sidebar-background: 240 8% 15%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 265 85% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 8% 20%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 8% 20%;
-    --sidebar-ring: 265 85% 58%;
-  }
+     :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 10%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 10%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 10%;
+        /* Vibrant Purple/Cyan Tech Theme */
+        --primary: 265 85% 58%;
+        --primary-foreground: 0 0% 100%;
+        --primary-glow: 265 85% 70%;
+        --secondary: 190 95% 45%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 240 5% 96%;
+        --muted-foreground: 240 4% 46%;
+        --accent: 190 95% 45%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --success: 142 76% 36%;
+        --success-foreground: 0 0% 100%;
+        --warning: 38 92% 50%;
+        --warning-foreground: 0 0% 100%;
+        --border: 240 6% 90%;
+        --input: 240 6% 90%;
+        --ring: 265 85% 58%;
+        --radius: 0.75rem;
+        /* Tech Gradients */
+        --gradient-primary: linear-gradient(135deg, hsl(265 85% 58%), hsl(190 95% 45%));
+        --gradient-hero: linear-gradient(135deg, hsl(265 85% 58%) 0%, hsl(190 95% 45%) 100%);
+        --gradient-accent: linear-gradient(90deg, hsl(265 85% 58%), hsl(280 85% 60%), hsl(190 95% 45%));
+        /* Shadows */
+        --shadow-elegant: 0 10px 30px -10px hsl(265 85% 58% / 0.3);
+        --shadow-glow: 0 0 40px hsl(265 85% 58% / 0.4);
+        --shadow-lg: 0 20px 50px -12px hsl(0 0% 0% / 0.25);
+        /* Admin Sidebar */
+        --sidebar-background: 240 10% 10%;
+        --sidebar-foreground: 240 5% 96%;
+        --sidebar-primary: 265 85% 58%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 240 8% 15%;
+        --sidebar-accent-foreground: 240 5% 96%;
+        --sidebar-border: 240 8% 15%;
+        --sidebar-ring: 265 85% 58%;
+    }
+    .dark {
+        --background: 240 10% 10%;
+        --foreground: 240 5% 96%;
+        --card: 240 8% 15%;
+        --card-foreground: 240 5% 96%;
+        --popover: 240 8% 15%;
+        --popover-foreground: 240 5% 96%;
+        --primary: 265 85% 58%;
+        --primary-foreground: 0 0% 100%;
+        --primary-glow: 265 85% 70%;
+        --secondary: 190 95% 45%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 240 8% 15%;
+        --muted-foreground: 240 5% 65%;
+        --accent: 190 95% 45%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 240 5% 96%;
+        --success: 142 76% 36%;
+        --success-foreground: 0 0% 100%;
+        --warning: 38 92% 50%;
+        --warning-foreground: 0 0% 100%;
+        --border: 240 8% 20%;
+        --input: 240 8% 20%;
+        --ring: 265 85% 58%;
+        /* Dark mode tech gradients */
+        --gradient-primary: linear-gradient(135deg, hsl(265 85% 58%), hsl(190 95% 45%));
+        --gradient-hero: linear-gradient(135deg, hsl(265 85% 58%) 0%, hsl(190 95% 45%) 100%);
+        --gradient-accent: linear-gradient(90deg, hsl(265 85% 58%), hsl(280 85% 60%), hsl(190 95% 45%));
+        /* Dark shadows with glow */
+        --shadow-elegant: 0 10px 30px -10px hsl(265 85% 58% / 0.5);
+        --shadow-glow: 0 0 50px hsl(265 85% 58% / 0.6);
+        --shadow-lg: 0 20px 50px -12px hsl(0 0% 0% / 0.7);
+        --sidebar-background: 240 8% 15%;
+        --sidebar-foreground: 240 5% 96%;
+        --sidebar-primary: 265 85% 58%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 240 8% 20%;
+        --sidebar-accent-foreground: 240 5% 96%;
+        --sidebar-border: 240 8% 20%;
+        --sidebar-ring: 265 85% 58%;
+    }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground font-sans;
+        font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    }
 }
 
 @layer utilities {
-  .transition-smooth {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .hover-scale {
-    @apply transition-smooth hover:scale-105;
-  }
-
-  .shadow-glow {
-    box-shadow: 0 0 40px hsl(var(--primary-glow) / 0.4);
-  }
-
-  .gradient-primary {
-    background: var(--gradient-primary);
-  }
-
-  .gradient-hero {
-    background: var(--gradient-hero);
-  }
-
-  .gradient-accent {
-    background: var(--gradient-accent);
-  }
-
-  .text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+    .transition-smooth {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-scale {
+        @apply transition-smooth hover: scale-105;
+    }
+    .shadow-glow {
+        box-shadow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    }
+    .gradient-primary {
+        background: var(--gradient-primary);
+    }
+    .gradient-hero {
+        background: var(--gradient-hero);
+    }
+    .gradient-accent {
+        background: var(--gradient-accent);
+    }
+    .text-gradient {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 }
 
-/* Leaflet CSS Fix */
-@import "leaflet/dist/leaflet.css";
+
+/* Leaflet CSS Fix (import moved to top of file to satisfy @import order requirements) */
+
 
 /* Marker Cluster Styling */
+
 .marker-cluster-small {
-  background-color: rgba(59, 130, 246, 0.6);
+    background-color: rgba(59, 130, 246, 0.6);
 }
 
 .marker-cluster-small div {
-  background-color: rgba(59, 130, 246, 0.8);
+    background-color: rgba(59, 130, 246, 0.8);
 }
 
 .marker-cluster-medium {
-  background-color: rgba(245, 158, 11, 0.6);
+    background-color: rgba(245, 158, 11, 0.6);
 }
 
 .marker-cluster-medium div {
-  background-color: rgba(245, 158, 11, 0.8);
+    background-color: rgba(245, 158, 11, 0.8);
 }
 
 .marker-cluster-large {
-  background-color: rgba(239, 68, 68, 0.6);
+    background-color: rgba(239, 68, 68, 0.6);
 }
 
 .marker-cluster-large div {
-  background-color: rgba(239, 68, 68, 0.8);
+    background-color: rgba(239, 68, 68, 0.8);
 }
 
 .marker-cluster {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 .marker-cluster div {
-  width: 30px;
-  height: 30px;
-  margin-left: 5px;
-  margin-top: 5px;
-  text-align: center;
-  border-radius: 50%;
-  font-weight: 600;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .marker-cluster span {
-  line-height: 30px;
+    line-height: 30px;
 }

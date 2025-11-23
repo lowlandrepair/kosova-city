@@ -1,8 +1,11 @@
 import { useReports } from "@/contexts/ReportContext";
 import { AlertCircle, Clock, CheckCircle2, TrendingUp, DollarSign } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
+import { format, subDays, startOfDay, isSameDay } from "date-fns";
 import L from "leaflet";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import { motion } from "framer-motion";
 
@@ -26,6 +29,33 @@ const AdminOverview = () => {
   // Calculate total budget for active reports
   const totalBudget = activeReports.reduce((sum, report) => sum + (report.estimatedCost || 0), 0);
   const isHighBudget = totalBudget > 10000;
+
+  // Generate 7-day burn rate data
+  const sevenDayData = useMemo(() => {
+    const data = [];
+    const today = startOfDay(new Date());
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = subDays(today, i);
+      const dayReports = reports.filter(r => isSameDay(new Date(r.timestamp), date));
+      const dailySpending = dayReports.reduce((sum, r) => sum + (r.estimatedCost || 0), 0);
+      
+      data.push({
+        date: format(date, "EEE"),
+        spending: dailySpending,
+        fullDate: format(date, "MMM dd"),
+      });
+    }
+    
+    return data;
+  }, [reports]);
+
+  const chartConfig = {
+    spending: {
+      label: "Daily Spending",
+      color: isHighBudget ? "hsl(var(--destructive))" : "hsl(var(--success))",
+    },
+  };
 
   // Custom marker icons based on priority
   const getMarkerIcon = (priority: string) => {
@@ -92,22 +122,66 @@ const AdminOverview = () => {
         {/* Stats Sidebar */}
         <div className="w-80 space-y-4 overflow-y-auto">
           <Card className={`border-l-4 p-6 ${isHighBudget ? 'border-l-destructive' : 'border-l-success'}`}>
-            <div className="flex items-center gap-4">
-              <div className={`rounded-lg p-3 ${isHighBudget ? 'bg-destructive/10' : 'bg-success/10'}`}>
-                <DollarSign className={`h-6 w-6 ${isHighBudget ? 'text-destructive' : 'text-success'}`} />
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className={`rounded-lg p-3 ${isHighBudget ? 'bg-destructive/10' : 'bg-success/10'}`}>
+                  <DollarSign className={`h-6 w-6 ${isHighBudget ? 'text-destructive' : 'text-success'}`} />
+                </div>
+                <div>
+                  <motion.p 
+                    key={totalBudget}
+                    initial={{ scale: 1.2, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className={`text-2xl font-bold ${isHighBudget ? 'text-destructive' : 'text-success'}`}
+                  >
+                    ${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </motion.p>
+                  <p className="text-xs text-muted-foreground">7-Day Burn Rate</p>
+                </div>
               </div>
-              <div>
-                <motion.p 
-                  key={totalBudget}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className={`text-3xl font-bold ${isHighBudget ? 'text-destructive' : 'text-success'}`}
-                >
-                  ${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </motion.p>
-                <p className="text-sm text-muted-foreground">Total Budget Required</p>
-              </div>
+              
+              <ChartContainer config={chartConfig} className="h-[120px]">
+                <AreaChart data={sevenDayData}>
+                  <defs>
+                    <linearGradient id="burnRateGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop 
+                        offset="0%" 
+                        stopColor={isHighBudget ? "hsl(var(--destructive))" : "hsl(var(--success))"} 
+                        stopOpacity={0.3} 
+                      />
+                      <stop 
+                        offset="100%" 
+                        stopColor={isHighBudget ? "hsl(var(--destructive))" : "hsl(var(--success))"} 
+                        stopOpacity={0} 
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="date" 
+                    className="text-xs"
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <YAxis 
+                    className="text-xs"
+                    tick={{ fill: "hsl(var(--muted-foreground))" }}
+                  />
+                  <ChartTooltip 
+                    content={<ChartTooltipContent 
+                      formatter={(value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                      labelFormatter={(label, payload) => payload?.[0]?.payload?.fullDate || label}
+                    />} 
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="spending" 
+                    stroke={isHighBudget ? "hsl(var(--destructive))" : "hsl(var(--success))"} 
+                    fill="url(#burnRateGradient)" 
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ChartContainer>
             </div>
           </Card>
 

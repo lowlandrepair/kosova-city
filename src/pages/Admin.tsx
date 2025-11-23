@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LayoutDashboard, Map, ListTodo, BarChart3, Home, ScrollText } from "lucide-react";
+import { LayoutDashboard, Map, ListTodo, BarChart3, Home, ScrollText, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AdminOverview from "@/components/admin/AdminOverview";
@@ -7,9 +7,10 @@ import AdminMap from "@/components/admin/AdminMap";
 import AdminKanban from "@/components/admin/AdminKanban";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminAuditTrail from "@/components/admin/AdminAuditTrail";
+import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
 
-type AdminTab = "overview" | "map" | "kanban" | "analytics" | "audit";
+type AdminTab = "overview" | "map" | "kanban" | "analytics" | "audit" | "users";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
@@ -34,6 +35,8 @@ const Admin = () => {
         return <AdminAnalytics />;
       case "audit":
         return <AdminAuditTrail onNavigateToReport={handleNavigateToReport} />;
+      case "users":
+        return <AdminUserManagement />;
       default:
         return <AdminOverview />;
     }
@@ -120,6 +123,18 @@ const Admin = () => {
             >
               <ScrollText className="h-5 w-5" />
               <span className="font-medium">Audit Trail</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
+                activeTab === "users"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              }`}
+            >
+              <Users className="h-5 w-5" />
+              <span className="font-medium">User Management</span>
             </button>
           </nav>
 

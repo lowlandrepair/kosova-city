@@ -201,18 +201,17 @@ const CitizenMap = () => {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-      {/* Map */}
+    <div className="relative rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <div className="relative h-[400px] w-full md:h-[500px]">
-        <div id="citizen-map-view" className="h-full w-full" />
+        <div id="citizen-map-view" className="absolute inset-0 h-full w-full" />
         
         {/* Map Layer Controls - Inside Map */}
-        <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-2">
+        <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-2 pointer-events-auto">
           <Button
             variant={activeLayer === "street" ? "default" : "outline"}
             size="icon"
             onClick={() => switchLayer("street")}
-            className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg hover:bg-primary"
+            className="h-10 w-10 bg-card backdrop-blur-sm shadow-lg hover:bg-primary border-2"
             title="Street View"
           >
             <Map className="h-4 w-4" />
@@ -221,7 +220,7 @@ const CitizenMap = () => {
             variant={activeLayer === "satellite" ? "default" : "outline"}
             size="icon"
             onClick={() => switchLayer("satellite")}
-            className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg hover:bg-primary"
+            className="h-10 w-10 bg-card backdrop-blur-sm shadow-lg hover:bg-primary border-2"
             title="Satellite View"
           >
             <Globe className="h-4 w-4" />
@@ -230,7 +229,7 @@ const CitizenMap = () => {
             variant={activeLayer === "terrain" ? "default" : "outline"}
             size="icon"
             onClick={() => switchLayer("terrain")}
-            className="h-10 w-10 bg-card/95 backdrop-blur-sm shadow-lg hover:bg-primary"
+            className="h-10 w-10 bg-card backdrop-blur-sm shadow-lg hover:bg-primary border-2"
             title="Terrain View"
           >
             <Mountain className="h-4 w-4" />
@@ -238,7 +237,7 @@ const CitizenMap = () => {
         </div>
 
         {/* Priority Legend - Inside Map */}
-        <div className="absolute right-4 top-4 z-[1000] rounded-lg border border-border bg-card/95 p-3 shadow-lg backdrop-blur-sm">
+        <div className="absolute right-4 top-4 z-[1000] rounded-lg border-2 border-border bg-card backdrop-blur-sm p-3 shadow-lg pointer-events-auto">
           <h3 className="mb-2 text-sm font-semibold text-foreground">Priority Levels</h3>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">

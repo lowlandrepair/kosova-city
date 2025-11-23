@@ -32,7 +32,8 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const getActorName = () => {
     if (profile?.display_name) return profile.display_name;
     if (user?.email) return user.email;
-    return "Unknown User";
+    if (user?.id) return `User ${user.id.slice(0, 8)}`;
+    return "Anonymous User";
   };
 
   // Fetch reports from Supabase
@@ -174,14 +175,29 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       setReports((prev) => [newReport, ...prev]);
       
       // Log the activity with real user info
+      const actorName = getActorName();
+      console.log("Logging report submission by:", actorName, "Profile:", profile, "User:", user?.email);
+      
       logActivity(
         "REPORTED",
-        getActorName(),
+        actorName,
         newReport.id,
         newReport.title,
-        `New ${newReport.category} report submitted`,
+        `New ${newReport.category} report submitted${newReport.imageUrl ? ' with image attachment' : ''}`,
         "USER_SUBMISSION"
       );
+      
+      // Log image upload if present
+      if (newReport.imageUrl) {
+        logActivity(
+          "SYSTEM_REPORT",
+          actorName,
+          newReport.id,
+          newReport.title,
+          "Image uploaded and attached to report",
+          "SYSTEM"
+        );
+      }
     } catch (error: any) {
       console.error("Error adding report:", error);
       toast({

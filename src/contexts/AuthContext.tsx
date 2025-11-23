@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { logActivity } from "@/lib/auditLogger";
 
 interface AuthContextType {
   user: User | null;
@@ -29,6 +30,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Log login/logout events
+        if (event === "SIGNED_IN" && session?.user) {
+          logActivity(
+            "LOGIN",
+            session.user.email || `User #${session.user.id.slice(0, 8)}`,
+            session.user.id,
+            "System Access",
+            "User logged into the system",
+            "SYSTEM"
+          );
+        }
         
         // Check admin role when session changes
         if (session?.user) {
@@ -120,7 +133,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
+    const userEmail = user?.email;
+    const userId = user?.id;
+    
     await supabase.auth.signOut();
+    
+    // Log logout event
+    if (userEmail && userId) {
+      logActivity(
+        "LOGOUT",
+        userEmail,
+        userId,
+        "System Access",
+        "User logged out of the system",
+        "SYSTEM"
+      );
+    }
+    
     setUser(null);
     setSession(null);
     setIsAdmin(false);

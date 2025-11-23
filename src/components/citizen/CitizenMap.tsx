@@ -129,12 +129,6 @@ const CitizenMap = () => {
 
     // Add new markers to cluster group
     reports.forEach((report) => {
-      console.log('CitizenMap: Creating marker for report', { 
-        id: report.id, 
-        title: report.title,
-        coordinates: report.coordinates 
-      });
-      
       const marker = L.marker(
         [report.coordinates.lat, report.coordinates.lng],
         { icon: getMarkerIcon(report.priority, report.status) }
@@ -142,17 +136,40 @@ const CitizenMap = () => {
       
       marker.bindPopup(`
         <div style="min-width: 280px; padding: 8px;">
-...
+          <div style="margin-bottom: 12px;">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #111827;">${report.title}</h4>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+              <span style="background: ${report.priority === "High" ? "#fef2f2" : report.priority === "Medium" ? "#fffbeb" : "#eff6ff"}; 
+                           color: ${report.priority === "High" ? "#dc2626" : report.priority === "Medium" ? "#d97706" : "#2563eb"};
+                           padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500;">
+                ${report.priority} Priority
+              </span>
+              <span style="background: #f3f4f6; color: #3b82f6; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500;">
+                ${report.category}
+              </span>
+              <span style="background: ${report.status === "Resolved" ? "#f0fdf4" : report.status === "In Progress" ? "#fffbeb" : "#f3f4f6"};
+                           color: ${report.status === "Resolved" ? "#16a34a" : report.status === "In Progress" ? "#d97706" : "#6b7280"};
+                           padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500;">
+                ${report.status}
+              </span>
+            </div>
+          </div>
+          <p style="font-size: 13px; color: #6b7280; margin-bottom: 10px; line-height: 1.4;">${report.description}</p>
+          ${report.imageUrl ? `<img src="${report.imageUrl}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 10px;" />` : ''}
+          <div style="display: flex; align-items: center; gap: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+              <span style="font-size: 12px; font-weight: 600; color: #3b82f6;">${report.upvotes}</span>
+              <span style="font-size: 12px; color: #6b7280;">upvotes</span>
+            </div>
           </div>
         </div>
       `);
       
-      console.log('CitizenMap: Adding marker to cluster', { reportId: report.id });
       clusterGroupRef.current.addLayer(marker);
-    });
-    
-    console.log('CitizenMap: Finished adding all markers', { 
-      totalMarkers: clusterGroupRef.current.getLayers().length 
     });
   }, [reports, isOffline]);
 

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logActivity } from "@/lib/auditLogger";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Table,
   TableBody,
@@ -36,6 +38,7 @@ const AdminUserManagement = () => {
   const [userRoles, setUserRoles] = useState<Map<string, "admin" | "user">>(new Map());
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { profile } = useAuth();
 
   useEffect(() => {
     fetchUsersAndRoles();
@@ -82,6 +85,10 @@ const AdminUserManagement = () => {
 
   const handleRoleChange = async (userId: string, newRole: "admin" | "user") => {
     try {
+      // Get user display name for audit log
+      const user = users.find(u => u.user_id === userId);
+      const displayName = user?.display_name || "Unknown User";
+      
       // Check if user already has a role
       const existingRole = userRoles.get(userId);
 
@@ -104,6 +111,16 @@ const AdminUserManagement = () => {
 
       // Update local state
       setUserRoles(new Map(userRoles.set(userId, newRole)));
+
+      // Log the role change to audit trail
+      await logActivity(
+        "EDITED_REPORT",
+        profile?.display_name || "Admin",
+        userId,
+        displayName,
+        `Changed user role from ${existingRole || "none"} to ${newRole}`,
+        "ADMIN_ACTION"
+      );
 
       toast({
         title: "Success",

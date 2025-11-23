@@ -5,6 +5,7 @@ import { Report, ReportStatus } from "@/types/report";
 import { toast } from "@/hooks/use-toast";
 import { COST_ESTIMATES } from "@/constants/costEstimates";
 import { useOffline } from "@/contexts/OfflineContext";
+import { logActivity } from "@/lib/auditLogger";
 
 interface ReportContextType {
   reports: Report[];
@@ -164,6 +165,16 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       };
 
       setReports((prev) => [newReport, ...prev]);
+      
+      // Log the activity
+      logActivity(
+        "REPORTED",
+        user.email || `Citizen #${user.id.slice(0, 8)}`,
+        newReport.id,
+        newReport.title,
+        `New ${newReport.category} report submitted`,
+        "USER_SUBMISSION"
+      );
     } catch (error: any) {
       console.error("Error adding report:", error);
       toast({
@@ -236,6 +247,9 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const updateReport = async (id: string, updates: Partial<Report>) => {
     try {
+      const existingReport = reports.find(r => r.id === id);
+      if (!existingReport) return;
+      
       const updateData: any = {};
       
       if (updates.title !== undefined) updateData.title = updates.title;
@@ -263,6 +277,39 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           report.id === id ? { ...report, ...updates } : report
         )
       );
+      
+      // Log the activity
+      const actor = user?.email || "Admin";
+      
+      // Determine what changed and log appropriately
+      if (updates.status && updates.status !== existingReport.status) {
+        logActivity(
+          "STATUS_CHANGE",
+          actor,
+          id,
+          existingReport.title,
+          `Status changed from ${existingReport.status} to ${updates.status}`,
+          "ADMIN_ACTION"
+        );
+      } else {
+        // Log other edits
+        const changes = [];
+        if (updates.estimatedCost !== undefined) changes.push(`Cost: $${updates.estimatedCost}`);
+        if (updates.priority !== undefined) changes.push(`Priority: ${updates.priority}`);
+        if (updates.title !== undefined) changes.push(`Title updated`);
+        if (updates.category !== undefined) changes.push(`Category: ${updates.category}`);
+        
+        if (changes.length > 0) {
+          logActivity(
+            "EDITED_REPORT",
+            actor,
+            id,
+            existingReport.title,
+            `Report edited - ${changes.join(", ")}`,
+            "ADMIN_ACTION"
+          );
+        }
+      }
     } catch (error: any) {
       console.error("Error updating report:", error);
       toast({
@@ -276,6 +323,8 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const deleteReport = async (id: string) => {
     try {
+      const existingReport = reports.find(r => r.id === id);
+      
       const { error } = await supabase
         .from("reports")
         .delete()
@@ -284,6 +333,18 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       if (error) throw error;
 
       setReports((prev) => prev.filter((report) => report.id !== id));
+      
+      // Log the deletion
+      if (existingReport) {
+        logActivity(
+          "DELETED",
+          user?.email || "Admin",
+          id,
+          existingReport.title,
+          `Report permanently deleted from system`,
+          "SECURITY_ALERT"
+        );
+      }
     } catch (error: any) {
       console.error("Error deleting report:", error);
       toast({

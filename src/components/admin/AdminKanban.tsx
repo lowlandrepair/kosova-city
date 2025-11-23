@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useReports } from "@/contexts/ReportContext";
 import { Report, ReportStatus } from "@/types/report";
@@ -10,10 +10,24 @@ import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { EditReportModal } from "./EditReportModal";
 
-const AdminKanban = () => {
+interface AdminKanbanProps {
+  highlightedReportId?: string | null;
+}
+
+const AdminKanban = ({ highlightedReportId }: AdminKanbanProps) => {
   const { reports, updateReport, deleteReport } = useReports();
   const { toast } = useToast();
   const [editingReport, setEditingReport] = useState<Report | null>(null);
+
+  // Auto-open edit modal when navigating from audit trail
+  useEffect(() => {
+    if (highlightedReportId) {
+      const report = reports.find((r) => r.id === highlightedReportId);
+      if (report) {
+        setEditingReport(report);
+      }
+    }
+  }, [highlightedReportId, reports]);
 
   const columns: { status: ReportStatus; title: string; icon: any; color: string }[] = [
     { status: "Pending", title: "Pending Review", icon: AlertCircle, color: "text-destructive" },

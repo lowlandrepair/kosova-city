@@ -1,19 +1,26 @@
 import { useState } from "react";
-import { LayoutDashboard, Map, ListTodo, BarChart3, Home } from "lucide-react";
+import { LayoutDashboard, Map, ListTodo, BarChart3, Home, ScrollText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AdminOverview from "@/components/admin/AdminOverview";
 import AdminMap from "@/components/admin/AdminMap";
 import AdminKanban from "@/components/admin/AdminKanban";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminAuditTrail from "@/components/admin/AdminAuditTrail";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
 
-type AdminTab = "overview" | "map" | "kanban" | "analytics";
+type AdminTab = "overview" | "map" | "kanban" | "analytics" | "audit";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  const handleNavigateToReport = (reportId: string) => {
+    setSelectedReportId(reportId);
+    setActiveTab("kanban");
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -22,9 +29,11 @@ const Admin = () => {
       case "map":
         return <AdminMap />;
       case "kanban":
-        return <AdminKanban />;
+        return <AdminKanban highlightedReportId={selectedReportId} />;
       case "analytics":
         return <AdminAnalytics />;
+      case "audit":
+        return <AdminAuditTrail onNavigateToReport={handleNavigateToReport} />;
       default:
         return <AdminOverview />;
     }
@@ -99,6 +108,18 @@ const Admin = () => {
             >
               <BarChart3 className="h-5 w-5" />
               <span className="font-medium">{t("admin.analytics")}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("audit")}
+              className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
+                activeTab === "audit"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              }`}
+            >
+              <ScrollText className="h-5 w-5" />
+              <span className="font-medium">Audit Trail</span>
             </button>
           </nav>
 

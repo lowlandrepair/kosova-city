@@ -25,8 +25,15 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userUpvotedReports, setUserUpvotedReports] = useState<Set<string>>(new Set());
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { isOffline, addToOfflineQueue, offlineQueue, syncOfflineReports, isSyncing } = useOffline();
+  
+  // Helper to get actor name for logging
+  const getActorName = () => {
+    if (profile?.display_name) return profile.display_name;
+    if (user?.email) return user.email;
+    return "Unknown User";
+  };
 
   // Fetch reports from Supabase
   useEffect(() => {
@@ -166,10 +173,10 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
       setReports((prev) => [newReport, ...prev]);
       
-      // Log the activity
+      // Log the activity with real user info
       logActivity(
         "REPORTED",
-        user.email || `Citizen #${user.id.slice(0, 8)}`,
+        getActorName(),
         newReport.id,
         newReport.title,
         `New ${newReport.category} report submitted`,
@@ -278,14 +285,14 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         )
       );
       
-      // Log the activity
-      const actor = user?.email || "Admin";
+      // Log the activity with real user/admin info
+      const actorName = getActorName();
       
       // Determine what changed and log appropriately
       if (updates.status && updates.status !== existingReport.status) {
         logActivity(
           "STATUS_CHANGE",
-          actor,
+          actorName,
           id,
           existingReport.title,
           `Status changed from ${existingReport.status} to ${updates.status}`,
@@ -302,7 +309,7 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         if (changes.length > 0) {
           logActivity(
             "EDITED_REPORT",
-            actor,
+            actorName,
             id,
             existingReport.title,
             `Report edited - ${changes.join(", ")}`,
@@ -334,11 +341,11 @@ export const ReportProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
       setReports((prev) => prev.filter((report) => report.id !== id));
       
-      // Log the deletion
+      // Log the deletion with real user info
       if (existingReport) {
         logActivity(
           "DELETED",
-          user?.email || "Admin",
+          getActorName(),
           id,
           existingReport.title,
           `Report permanently deleted from system`,

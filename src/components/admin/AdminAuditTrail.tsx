@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, ExternalLink } from "lucide-react";
-import { getLogs, generateMockLogs } from "@/lib/auditLogger";
+import { getLogs } from "@/lib/auditLogger";
 import { AuditLog, AuditAction, AuditCategory } from "@/types/auditLog";
 import { format } from "date-fns";
 
@@ -19,8 +19,14 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   useEffect(() => {
-    generateMockLogs(); // Generate mock data on first load
     setLogs(getLogs());
+    
+    // Refresh logs every 2 seconds to catch new activity
+    const interval = setInterval(() => {
+      setLogs(getLogs());
+    }, 2000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const getActionBadgeColor = (action: AuditAction) => {
@@ -45,9 +51,10 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
     return logs.filter((log) => {
       // Actor type filter
       if (actorFilter !== "all") {
-        if (actorFilter === "citizen" && !log.actor.toLowerCase().includes("citizen")) return false;
-        if (actorFilter === "admin" && !log.actor.toLowerCase().includes("admin")) return false;
-        if (actorFilter === "system" && !log.actor.toLowerCase().includes("system")) return false;
+        const actorLower = log.actor.toLowerCase();
+        if (actorFilter === "citizen" && !actorLower.includes("@")) return false; // Email = citizen
+        if (actorFilter === "admin" && !actorLower.includes("admin") && actorLower.includes("@")) return false;
+        if (actorFilter === "system" && (actorLower !== "system api" && log.category !== "SYSTEM")) return false;
       }
 
       // Category filter
@@ -97,13 +104,12 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
             />
           </div>
 
-          {/* Actor Filter */}
-          <Select value={actorFilter} onValueChange={setActorFilter}>
+            <Select value={actorFilter} onValueChange={setActorFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by Actor" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Actors</SelectItem>
+              <SelectItem value="all">All Users</SelectItem>
               <SelectItem value="citizen">Citizens</SelectItem>
               <SelectItem value="admin">Admins</SelectItem>
               <SelectItem value="system">System</SelectItem>
@@ -147,7 +153,7 @@ const AdminAuditTrail = ({ onNavigateToReport }: AdminAuditTrailProps) => {
                     Action
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Actor
+                    User
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Details

@@ -885,3 +885,6 @@ Built for **[digitalschool]** - [Date]
 - [Unsplash](https://unsplash.com/) - Placeholder images
 
 by dalmat ademi
+and if you want to log in as admin its 
+Email:dalmat@gmail.com
+Password:adminadmin

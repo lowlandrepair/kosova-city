@@ -61,15 +61,17 @@ const Index = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             <div className="p-2 space-y-1">
-              {[
-                { code: "en", label: "English" },
-                { code: "sq", label: "Shqip" },
-                { code: "es", label: "Español" },
-                { code: "fr", label: "Français" },
-              ].map((lang) => (
+              {(
+                [
+                  { code: "en", label: "English" },
+                  { code: "sq", label: "Shqip" },
+                  { code: "es", label: "Español" },
+                  { code: "fr", label: "Français" },
+                ] as const
+              ).map((lang) => (
                 <button
                   key={lang.code}
-                  onClick={() => setLanguage(lang.code as any)}
+                  onClick={() => setLanguage(lang.code)}
                   className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
                     language === lang.code
                       ? "bg-primary text-primary-foreground"
@@ -113,7 +115,8 @@ const Index = () => {
                 transition={{ delay: 0.2 }}
                 className="inline-flex items-center gap-3 rounded-full bg-primary/10 px-6 py-3"
               >
-                <MapPin className="h-6 w-6 text-primary" />
+                {/* Logo image served from public/trileqe.jpg. Place the file in the project's `public/` folder. */}
+                <img src="/trileqe.jpg" alt="CityCare logo" className="h-8 w-8 rounded-full object-cover" />
                 <span className="text-2xl font-bold text-primary">CityCare</span>
               </motion.div>
               
@@ -542,7 +545,7 @@ const Index = () => {
       <footer className="border-t border-border px-6 py-12 bg-card/30">
         <div className="mx-auto max-w-6xl text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <MapPin className="h-6 w-6 text-primary" />
+            <img src="/trileqe.jpg" alt="CityCare logo" className="h-6 w-6 rounded-full object-cover" />
             <span className="text-2xl font-bold">CityCare</span>
           </div>
           <p className="text-sm text-muted-foreground mb-4">

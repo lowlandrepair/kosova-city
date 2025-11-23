@@ -66,6 +66,16 @@ const Auth = () => {
             });
           }
         } else {
+          // Log successful login here instead of in AuthContext
+          logActivity(
+            "LOGIN",
+            validatedData.email,
+            "auth-session",
+            "System Access",
+            "User logged into the system",
+            "SYSTEM"
+          );
+          
           toast({
             title: "Welcome back!",
             description: "You've successfully logged in.",

@@ -1,6 +1,6 @@
 import { useReports } from "@/contexts/ReportContext";
 import { useOffline } from "@/contexts/OfflineContext";
-import { WifiOff } from "lucide-react";
+import { WifiOff, Locate, LocateFixed } from "lucide-react";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { useEffect, useRef, useState } from "react";
@@ -27,6 +27,10 @@ const CitizenMap = () => {
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const tileLayersRef = useRef<Record<MapLayer, L.TileLayer>>({} as Record<MapLayer, L.TileLayer>);
   const [activeLayer, setActiveLayer] = useState<MapLayer>("street");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const userLocationMarkerRef = useRef<L.Marker | null>(null);
 
   const getMarkerIcon = (priority: string, status: string) => {
     let color = "#3b82f6"; // default blue
@@ -41,6 +45,66 @@ const CitizenMap = () => {
       iconSize: [24, 24],
       iconAnchor: [12, 12],
     });
+  };
+
+  // Get user's current location
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError(null);
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const location = { lat: latitude, lng: longitude };
+        setUserLocation(location);
+        
+        // Center map on user's location
+        if (mapRef.current) {
+          mapRef.current.setView(location, 15);
+          
+          // Add or update user location marker
+          if (userLocationMarkerRef.current) {
+            userLocationMarkerRef.current.setLatLng(location);
+          } else if (mapRef.current) {
+            const userIcon = L.divIcon({
+              className: 'user-location-marker',
+              html: `<div class="relative">
+                      <div class="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-blue-400 opacity-75"></div>
+                      <div class="relative inline-flex rounded-full h-6 w-6 bg-blue-500 border-2 border-white"></div>
+                    </div>`,
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            });
+            
+            userLocationMarkerRef.current = L.marker(location, {
+              icon: userIcon,
+              zIndexOffset: 1000
+            }).addTo(mapRef.current);
+          }
+        }
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setLocationError('Unable to retrieve your location. Please ensure location services are enabled.');
+        setIsLocating(false);
+        
+        // Fallback to default view if no location access
+        if (mapRef.current && !userLocation) {
+          mapRef.current.setView([42.6026, 20.9030], 12);
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   // Initialize map once
@@ -107,6 +171,21 @@ const CitizenMap = () => {
         mapRef.current.remove();
         mapRef.current = null;
         clusterGroupRef.current = null;
+      }
+    };
+  }, [isOffline]);
+
+  // Get user location when component mounts
+  useEffect(() => {
+    if (!isOffline) {
+      getUserLocation();
+    }
+    
+    // Cleanup
+    return () => {
+      if (userLocationMarkerRef.current && mapRef.current) {
+        mapRef.current.removeLayer(userLocationMarkerRef.current);
+        userLocationMarkerRef.current = null;
       }
     };
   }, [isOffline]);
@@ -205,8 +284,25 @@ const CitizenMap = () => {
       <div className="relative h-72 sm:h-96 md:h-[500px] w-full">
         <div id="citizen-map-view" className="absolute inset-0 h-full w-full" />
         
-        {/* Map Layer Controls - Inside Map */}
+        {/* Map Controls - Left Side */}
         <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-2 pointer-events-auto">
+          {/* Location Button */}
+          <Button
+            variant={userLocation ? "default" : "outline"}
+            size="icon"
+            onClick={getUserLocation}
+            className="h-10 w-10 bg-card backdrop-blur-sm shadow-lg hover:bg-primary border-2"
+            title={isLocating ? 'Locating...' : 'Find my location'}
+            disabled={isLocating}
+          >
+            {isLocating ? (
+              <div className="animate-spin">
+                <Locate className="h-4 w-4" />
+              </div>
+            ) : (
+              <LocateFixed className={`h-4 w-4 ${userLocation ? 'text-white' : ''}`} />
+            )}
+          </Button>
           <Button
             variant={activeLayer === "street" ? "default" : "outline"}
             size="icon"
@@ -262,5 +358,20 @@ const CitizenMap = () => {
     </div>
   );
 };
+
+// Add some global styles for the user location marker
+const style = document.createElement('style');
+style.textContent = `
+  .user-location-marker {
+    background: transparent !important;
+    border: none !important;
+  }
+  .user-location-marker div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+document.head.appendChild(style);
 
 export default CitizenMap;

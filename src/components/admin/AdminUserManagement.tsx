@@ -151,8 +151,9 @@ const AdminUserManagement = () => {
         <p className="text-muted-foreground">Manage user roles and permissions</p>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-auto">
+        <div className="min-w-full">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Display Name</TableHead>
@@ -186,7 +187,8 @@ const AdminUserManagement = () => {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
     </div>
   );

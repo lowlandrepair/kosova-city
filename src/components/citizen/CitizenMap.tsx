@@ -202,7 +202,7 @@ const CitizenMap = () => {
 
   return (
     <div className="relative rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-      <div className="relative h-[400px] w-full md:h-[500px]">
+      <div className="relative h-72 sm:h-96 md:h-[500px] w-full">
         <div id="citizen-map-view" className="absolute inset-0 h-full w-full" />
         
         {/* Map Layer Controls - Inside Map */}

@@ -64,7 +64,7 @@ const CitizenActivity = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6 md:ml-64">
+    <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -34,7 +34,9 @@ const Citizen = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pb-20 md:pb-0">
-      {renderContent()}
+      <main className="site-container md:ml-64 md:pl-6 pt-6 md:pt-12 pb-28 md:pb-0">
+        {renderContent()}
+      </main>
 
       {/* Floating Action Button (Mobile) */}
       {!showReportFlow && (
@@ -107,7 +109,7 @@ const Citizen = () => {
 
       {/* Desktop Sidebar */}
       {!showReportFlow && (
-        <nav className="fixed left-0 top-0 hidden h-screen w-64 border-r border-border bg-card md:block">
+        <nav className="hidden md:fixed md:block left-0 top-0 h-screen w-64 border-r border-border bg-card">
           <div className="flex h-full flex-col">
             <div className="p-6 border-b border-border">
               <h1 className="text-2xl font-bold text-primary">{t("citizen.title")}</h1>

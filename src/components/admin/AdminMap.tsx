@@ -108,8 +108,8 @@ const AdminMap = () => {
         <p className="text-muted-foreground">Interactive city-wide issue tracking</p>
       </div>
 
-      {/* Legend */}
-      <div className="absolute right-6 top-28 z-[1000] rounded-lg border border-border bg-card p-4 shadow-lg">
+      {/* Legend: absolute on md+, bottom fixed on mobile */}
+      <div className="hidden md:block absolute right-6 top-28 z-[1000] rounded-lg border border-border bg-card p-4 shadow-lg">
         <h3 className="mb-3 font-semibold">Priority Levels</h3>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -128,6 +128,23 @@ const AdminMap = () => {
             <div className="h-4 w-4 rounded-full bg-success" />
             <span className="text-sm">Resolved</span>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile legend (bottom) */}
+      <div className="md:hidden fixed left-4 right-4 bottom-6 z-[1000] rounded-lg border border-border bg-card p-3 shadow-lg">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="h-3 w-3 rounded-full bg-destructive" />
+            <span className="text-xs">High</span>
+            <div className="h-3 w-3 rounded-full bg-warning ml-3" />
+            <span className="text-xs">Medium</span>
+            <div className="h-3 w-3 rounded-full bg-primary ml-3" />
+            <span className="text-xs">Low</span>
+            <div className="h-3 w-3 rounded-full bg-success ml-3" />
+            <span className="text-xs">Resolved</span>
+          </div>
+          <div className="text-xs text-muted-foreground">Tap markers for details</div>
         </div>
       </div>
 

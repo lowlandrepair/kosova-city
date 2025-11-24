@@ -111,16 +111,16 @@ const AdminOverview = () => {
   }, [activeReports]);
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card p-6">
         <h1 className="text-3xl font-bold">Command Center Overview</h1>
         <p className="text-muted-foreground">Real-time monitoring dashboard</p>
       </div>
 
-      <div className="flex h-[calc(100vh-113px)] gap-6 p-6">
+      <div className="flex flex-col md:flex-row h-auto md:h-[calc(100vh-113px)] gap-6 p-6">
         {/* Stats Sidebar */}
-        <div className="w-80 space-y-4 overflow-y-auto">
+        <div className="w-full md:w-80 space-y-4 overflow-y-auto">
           <Card className={`border-l-4 p-6 ${isHighBudget ? 'border-l-destructive' : 'border-l-success'}`}>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
@@ -255,8 +255,8 @@ const AdminOverview = () => {
         </div>
 
         {/* Map */}
-        <Card className="flex-1 overflow-hidden">
-          <div id="admin-overview-map" className="h-full w-full" />
+        <Card className="flex-1 overflow-hidden min-h-[320px] md:min-h-0">
+          <div id="admin-overview-map" className="h-full w-full min-h-[320px]" />
         </Card>
       </div>
     </div>

@@ -42,7 +42,7 @@ const CitizenHome = () => {
   }, [reports]);
 
   return (
-    <div className="min-h-screen md:ml-64">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-hero px-6 py-12 text-white md:py-20">
         <motion.div

@@ -78,7 +78,7 @@ const AdminKanban = ({ highlightedReportId }: AdminKanbanProps) => {
   };
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="min-h-screen overflow-hidden">
       {/* Header */}
       <div className="border-b border-border bg-card p-6">
         <h1 className="text-3xl font-bold">Workflow Board</h1>
@@ -86,14 +86,14 @@ const AdminKanban = ({ highlightedReportId }: AdminKanbanProps) => {
       </div>
 
       {/* Kanban Board */}
-      <div className="h-[calc(100vh-113px)] overflow-x-auto">
-        <div className="flex h-full gap-6 p-6">
+      <div className="min-h-[calc(100vh-113px)]">
+        <div className="flex flex-col sm:flex-row gap-6 p-6">
           {columns.map((column) => {
             const columnReports = reports.filter((r) => r.status === column.status);
             const Icon = column.icon;
 
             return (
-              <div key={column.status} className="flex w-96 flex-shrink-0 flex-col">
+              <div key={column.status} className="flex w-full sm:w-72 flex-col">
                 {/* Column Header */}
                 <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-card p-4">
                   <Icon className={`h-5 w-5 ${column.color}`} />

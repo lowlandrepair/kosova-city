@@ -95,7 +95,7 @@ export const ProfileDropdown = () => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-72" align="end" forceMount>
+        <DropdownMenuContent className="w-72" side="bottom" align="end" sideOffset={8} forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-2 p-2">
               <div className="flex items-center gap-3">

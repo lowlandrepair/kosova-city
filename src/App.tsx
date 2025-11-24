@@ -13,7 +13,9 @@ import Index from "./pages/Index";
 import Citizen from "./pages/Citizen";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Header from "@/components/Header";
 
 const queryClient = new QueryClient();
 
@@ -26,11 +28,13 @@ const App = () => (
             <OfflineProvider>
               <ReportProvider>
                 <TooltipProvider>
+                  <Header />
                   <Toaster />
                   <Sonner />
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/contact" element={<Contact />} />
                     <Route
                       path="/citizen"
                       element={

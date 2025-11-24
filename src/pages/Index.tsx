@@ -11,7 +11,7 @@ import { useReports } from "@/contexts/ReportContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ProfileDropdown } from "@/components/ProfileDropdown";
+// ProfileDropdown intentionally omitted on the home page (kept for admin/citizen portals)
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,11 +46,8 @@ const Index = () => {
       </div>
 
       {/* Top Controls */}
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        {/* Profile Dropdown - shown when logged in */}
-        {user && (
-          <ProfileDropdown />
-        )}
+      <div className="fixed top-4 right-4 z-[2100] flex items-center gap-2">
+        {/* Profile Dropdown removed from home screen (kept on admin and citizen pages) */}
         
         {/* Language Switcher */}
         <DropdownMenu>
@@ -59,7 +56,7 @@ const Index = () => {
               <Globe className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
+          <DropdownMenuContent side="bottom" align="end" sideOffset={8} className="w-32">
             <div className="p-2 space-y-1">
               {(
                 [
@@ -89,7 +86,7 @@ const Index = () => {
         <Button
           variant="outline"
           size="icon"
-          className="h-10 w-10"
+          className="h-10 w-10 z-10"
           onClick={toggleDarkMode}
         >
           {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -101,7 +98,7 @@ const Index = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
         
-        <div className="relative px-6 py-20 md:py-32">
+        <div className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-20 md:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -138,14 +135,14 @@ const Index = () => {
               )}
             </div>
 
-            <h1 className="mb-6 text-5xl font-bold leading-tight md:text-7xl">
+            <h1 className="mb-6 text-4xl sm:text-5xl md:text-7xl font-bold leading-tight">
               {t("landing.smartCity")} <br />
               <span className="bg-gradient-hero bg-clip-text text-transparent">
                 {t("landing.smarterSolutions")}
               </span>
             </h1>
 
-            <p className="mb-8 text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto">
+            <p className="mb-8 text-lg sm:text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto">
               {t("landing.aiPowered")}
             </p>
 
@@ -222,7 +219,7 @@ const Index = () => {
                   </ul>
                   <Button
                     onClick={() => handlePortalNavigation("citizen")}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 btn-responsive"
                     size="lg"
                   >
                     {user ? t("landing.openCitizen") : t("landing.signIn")}
@@ -263,11 +260,11 @@ const Index = () => {
                       </li>
                     </ul>
                     <Button
-                      onClick={() => handlePortalNavigation("admin")}
-                      variant="outline"
-                      className="w-full"
-                      size="lg"
-                    >
+                        onClick={() => handlePortalNavigation("admin")}
+                        variant="outline"
+                        className="w-full btn-responsive"
+                        size="lg"
+                      >
                       {t("landing.openAdmin")}
                       <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                     </Button>
@@ -504,7 +501,7 @@ const Index = () => {
                 <Button
                   onClick={() => !user ? navigate("/auth") : navigate("/citizen")}
                   size="lg"
-                  className="text-lg px-8 py-6 group"
+                  className="text-lg px-6 py-4 sm:px-8 sm:py-6 group btn-responsive"
                 >
                   {user ? "Go to Portal" : "Get Started Today"}
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -514,7 +511,7 @@ const Index = () => {
                     onClick={() => navigate("/auth")}
                     size="lg"
                     variant="outline"
-                    className="text-lg px-8 py-6"
+                    className="text-lg px-6 py-4 sm:px-8 sm:py-6 btn-responsive"
                   >
                     Learn More
                   </Button>
@@ -554,6 +551,9 @@ const Index = () => {
           <p className="text-xs text-muted-foreground">
             © 2024 CityCare. Built with ❤️ for better cities.
           </p>
+          <div className="mt-4">
+            <a href="/contact" className="text-sm underline hover:text-primary">Contact Us</a>
+          </div>
         </div>
       </footer>
     </div>

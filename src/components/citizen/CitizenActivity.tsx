@@ -3,6 +3,7 @@ import { CheckCircle2, Clock, XCircle, AlertCircle, User, MapPin } from "lucide-
 import { useReports } from "@/contexts/ReportContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOffline } from "@/contexts/OfflineContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ const CitizenActivity = () => {
   const { reports } = useReports();
   const { user } = useAuth();
   const { offlineQueue } = useOffline();
+  const { t } = useLanguage();
   const [reportsWithAuthors, setReportsWithAuthors] = useState<ReportWithAuthor[]>([]);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const CitizenActivity = () => {
       
       const reportsWithNames = reports.map(report => ({
         ...report,
-        authorName: profileMap.get(report.userId) || "Anonymous User"
+        authorName: profileMap.get(report.userId) || t("citizen.anonymousUser")
       }));
       
       setReportsWithAuthors(reportsWithNames);
@@ -55,10 +57,10 @@ const CitizenActivity = () => {
 
   const getStatusSteps = (status: string) => {
     const steps = [
-      { label: "Sent", completed: true },
-      { label: "Received", completed: status !== "Pending" },
-      { label: "Crew Dispatched", completed: status === "In Progress" || status === "Resolved" },
-      { label: "Resolved", completed: status === "Resolved" }
+      { label: t("citizen.sent"), completed: true },
+      { label: t("citizen.received"), completed: status !== "Pending" },
+      { label: t("citizen.crewDispatched"), completed: status === "In Progress" || status === "Resolved" },
+      { label: t("citizen.resolved"), completed: status === "Resolved" }
     ];
     return steps;
   };
@@ -70,9 +72,9 @@ const CitizenActivity = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="mb-2 text-3xl font-bold">My Activity</h1>
+          <h1 className="mb-2 text-3xl font-bold">{t("citizen.myActivity")}</h1>
           <p className="mb-8 text-muted-foreground">
-            Track the status of your reports
+            {t("citizen.trackStatus")}
           </p>
         </motion.div>
 
@@ -81,7 +83,7 @@ const CitizenActivity = () => {
           <div className="mb-6 space-y-4">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <span className="rounded-full bg-warning/10 px-3 py-1 text-sm font-medium text-warning">
-                ⚠️ Offline Queue ({offlineQueue.length})
+                ⚠️ {t("citizen.offlineQueue")} ({offlineQueue.length})
               </span>
             </h2>
             {offlineQueue.map((report) => (
@@ -93,10 +95,10 @@ const CitizenActivity = () => {
               >
                 <div className="mb-2 flex items-center gap-2">
                   <span className="rounded-full bg-warning/20 px-3 py-1 text-xs font-medium text-warning">
-                    ⚠️ Saved Offline (Waiting for Connection)
+                    ⚠️ {t("citizen.savedOffline")}
                   </span>
                   <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                    {report.category}
+                    {t(`report.categories.${report.category.toLowerCase().replace(/\s+/g, "")}`)}
                   </span>
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{report.title}</h3>
@@ -143,7 +145,7 @@ const CitizenActivity = () => {
                     </p>
                     <div className="mb-2 flex flex-wrap gap-2">
                       <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                        {report.category}
+                        {t(`report.categories.${report.category.toLowerCase().replace(/\s+/g, "")}`)}
                       </span>
                       <span className={`rounded-full px-3 py-1 text-xs font-medium ${
                         report.priority === "High"
@@ -152,12 +154,12 @@ const CitizenActivity = () => {
                           ? "bg-warning/10 text-warning"
                           : "bg-muted text-muted-foreground"
                       }`}>
-                        {report.priority} Priority
+                        {t(`report.priority.${report.priority.toLowerCase()}`)} {t("citizen.priority")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />
-                      <span>Location: {report.coordinates.lat.toFixed(4)}, {report.coordinates.lng.toFixed(4)}</span>
+                      <span>{t("citizen.location")}: {report.coordinates.lat.toFixed(4)}, {report.coordinates.lng.toFixed(4)}</span>
                     </div>
                   </div>
                 </div>

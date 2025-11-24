@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useReports } from "@/contexts/ReportContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ReportCategory, ReportPriority } from "@/types/report";
 import ReportLocationStep from "./ReportLocationStep";
 import ReportDetailsStep from "./ReportDetailsStep";
@@ -14,6 +15,7 @@ const ReportFlow = ({ onClose }: { onClose: () => void }) => {
   const [step, setStep] = useState<ReportStep>("location");
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const { addReport } = useReports();
+  const { t } = useLanguage();
 
   const handleLocationConfirm = (coords: { lat: number; lng: number }) => {
     setCoordinates(coords);
@@ -57,9 +59,9 @@ const ReportFlow = ({ onClose }: { onClose: () => void }) => {
       <div className="border-b border-border bg-card">
         <div className="flex items-center justify-between p-4">
           <h2 className="text-xl font-bold">
-            {step === "location" && "Select Location"}
-            {step === "details" && "Report Details"}
-            {step === "success" && "Success!"}
+            {step === "location" && t("citizen.selectLocation")}
+            {step === "details" && t("citizen.reportDetails")}
+            {step === "success" && t("citizen.success")}
           </h2>
           <button
             onClick={onClose}

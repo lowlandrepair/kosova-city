@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { WifiOff } from "lucide-react";
+import { WifiOff, Locate } from "lucide-react";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import L from "leaflet";
@@ -22,10 +22,47 @@ interface ReportLocationStepProps {
 
 const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
   const [position, setPosition] = useState({ lat: 42.6026, lng: 20.9030 }); // Kosovo (Pristina) default
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(true);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
   const { isOffline } = useOffline();
   const { t } = useLanguage();
+
+  const updateLocation = (newPosition: { lat: number; lng: number }) => {
+    setPosition(newPosition);
+    if (mapRef.current && markerRef.current) {
+      mapRef.current.setView(newPosition, 15);
+      markerRef.current.setLatLng(newPosition);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-detect location when component mounts
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          updateLocation({ lat: latitude, lng: longitude });
+          setIsLocating(false);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          setLocationError('Unable to retrieve your location. Please use the map to select a location.');
+          setIsLocating(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      setLocationError('Geolocation is not supported by your browser. Please use the map to select a location.');
+      setIsLocating(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (isOffline || mapRef.current) return;
@@ -67,6 +104,34 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
     };
   }, [isOffline]);
 
+  const handleLocationClick = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setLocationError(null);
+    setIsLocating(true);
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        updateLocation({ lat: latitude, lng: longitude });
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setLocationError('Unable to retrieve your location. Please ensure location services are enabled.');
+        setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -76,9 +141,24 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
     >
       {/* Instructions */}
       <div className="bg-primary/5 p-4 text-center">
-        <p className="text-sm font-medium text-foreground">
-          {t("citizen.clickMap")}
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-foreground">
+            {isLocating ? 'Locating you...' : 'Click on the map to adjust the location if needed'}
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLocationClick}
+            className="flex items-center gap-1.5"
+            disabled={isLocating}
+          >
+            <Locate className={`h-4 w-4 ${isLocating ? 'animate-pulse' : ''}`} />
+            <span>{isLocating ? 'Locating...' : 'Relocate Me'}</span>
+          </Button>
+        </div>
+        {locationError && (
+          <p className="mt-2 text-xs text-destructive">{locationError}</p>
+        )}
       </div>
 
       {/* Map Container */}

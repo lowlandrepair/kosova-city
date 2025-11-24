@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { ReportCategory, ReportPriority } from "@/types/report";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ReportDetailsStepProps {
@@ -29,6 +30,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isEnhancing, setIsEnhancing] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -114,7 +116,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
       <div className="mx-auto max-w-2xl space-y-6 p-6">
         {/* Image Upload */}
         <div className="space-y-2">
-          <Label>Photo Evidence (Optional)</Label>
+          <Label>{t("citizen.photoEvidence")}</Label>
           <div className="flex items-center gap-4">
             {imagePreview ? (
               <div className="relative h-32 w-32 overflow-hidden rounded-lg border-2 border-border">
@@ -127,7 +129,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
             ) : (
               <label className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 transition-colors hover:bg-muted">
                 <ImageIcon className="mb-2 h-8 w-8 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Upload</span>
+                <span className="text-xs text-muted-foreground">{t("citizen.upload")}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -138,7 +140,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
             )}
             <div className="flex-1">
               <p className="text-sm text-muted-foreground">
-                Add a photo to help us understand the issue better
+                {t("citizen.addPhotoHelp")}
               </p>
             </div>
           </div>
@@ -146,10 +148,10 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
 
         {/* Title */}
         <div className="space-y-2">
-          <Label htmlFor="title">Issue Title *</Label>
+          <Label htmlFor="title">{t("citizen.issueTitle")} *</Label>
           <Input
             id="title"
-            placeholder="Brief summary of the issue"
+            placeholder={t("citizen.briefSummary")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -157,44 +159,44 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
 
         {/* Category */}
         <div className="space-y-2">
-          <Label htmlFor="category">Category *</Label>
+          <Label htmlFor="category">{t("citizen.category")} *</Label>
           <Select value={category} onValueChange={(v) => setCategory(v as ReportCategory)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Pothole">Pothole</SelectItem>
-              <SelectItem value="Lighting">Lighting</SelectItem>
-              <SelectItem value="Trash">Trash</SelectItem>
-              <SelectItem value="Graffiti">Graffiti</SelectItem>
-              <SelectItem value="Water Leak">Water Leak</SelectItem>
-              <SelectItem value="Tree Maintenance">Tree Maintenance</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
+              <SelectItem value="Pothole">{t("report.categories.pothole")}</SelectItem>
+              <SelectItem value="Lighting">{t("report.categories.lighting")}</SelectItem>
+              <SelectItem value="Trash">{t("report.categories.trash")}</SelectItem>
+              <SelectItem value="Graffiti">{t("report.categories.graffiti")}</SelectItem>
+              <SelectItem value="Water Leak">{t("report.categories.waterleak")}</SelectItem>
+              <SelectItem value="Tree Maintenance">{t("report.categories.treemaintenance")}</SelectItem>
+              <SelectItem value="Other">{t("report.categories.other")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Priority */}
         <div className="space-y-2">
-          <Label htmlFor="priority">Priority Level</Label>
+          <Label htmlFor="priority">{t("citizen.priorityLevel")}</Label>
           <Select value={priority} onValueChange={(v) => setPriority(v as ReportPriority)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Low">Low - Minor inconvenience</SelectItem>
-              <SelectItem value="Medium">Medium - Needs attention</SelectItem>
-              <SelectItem value="High">High - Safety concern</SelectItem>
+              <SelectItem value="Low">{t("citizen.lowPriority")}</SelectItem>
+              <SelectItem value="Medium">{t("citizen.mediumPriority")}</SelectItem>
+              <SelectItem value="High">{t("citizen.highPriority")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Description */}
         <div className="space-y-2">
-          <Label htmlFor="description">Description *</Label>
+          <Label htmlFor="description">{t("citizen.description")} *</Label>
           <Textarea
             id="description"
-            placeholder="Describe the issue in detail..."
+            placeholder={t("citizen.describeIssue")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
@@ -207,7 +209,7 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
             className="w-full"
           >
             <Sparkles className="mr-2 h-4 w-4" />
-            {isEnhancing ? "Enhancing..." : "✨ Auto-Enhance with AI"}
+            {isEnhancing ? t("citizen.enhancing") : t("citizen.autoEnhance")}
           </Button>
         </div>
 
@@ -218,13 +220,13 @@ const ReportDetailsStep = ({ onSubmit, onBack }: ReportDetailsStepProps) => {
             onClick={onBack}
             className="flex-1"
           >
-            Back
+            {t("citizen.back")}
           </Button>
           <Button
             onClick={handleSubmit}
             className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            Submit Report
+            {t("citizen.submitReport")}
           </Button>
         </div>
       </div>

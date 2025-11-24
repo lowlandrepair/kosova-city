@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { WifiOff, Locate } from "lucide-react";
 import { useOffline } from "@/contexts/OfflineContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -26,6 +27,7 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
   const { isOffline } = useOffline();
+  const { t } = useLanguage();
 
   const updateLocation = (newPosition: { lat: number; lng: number }) => {
     setPosition(newPosition);
@@ -166,8 +168,8 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
             <div className="space-y-4 text-center">
               <WifiOff className="mx-auto h-16 w-16 text-muted-foreground" />
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Map Unavailable Offline</h3>
-                <p className="text-sm text-muted-foreground">The map will be available when you're back online</p>
+                <h3 className="text-lg font-semibold text-foreground">{t("citizen.mapUnavailable")}</h3>
+                <p className="text-sm text-muted-foreground">{t("citizen.mapUnavailableDesc")}</p>
               </div>
             </div>
           </div>
@@ -177,7 +179,7 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
 
         {/* Coordinates Display */}
         <div className="absolute bottom-4 left-4 z-[1000] rounded-lg bg-card/95 px-4 py-2 shadow-lg backdrop-blur-sm">
-          <p className="text-xs text-muted-foreground">Selected Location</p>
+          <p className="text-xs text-muted-foreground">{t("citizen.selectedLocation")}</p>
           <p className="font-mono text-sm font-medium">
             {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
           </p>
@@ -192,13 +194,13 @@ const ReportLocationStep = ({ onConfirm, onBack }: ReportLocationStepProps) => {
             onClick={onBack}
             className="flex-1"
           >
-            Cancel
+            {t("citizen.cancel")}
           </Button>
           <Button
             onClick={() => onConfirm(position)}
             className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            Confirm Location
+            {t("citizen.confirmLocation")}
           </Button>
         </div>
       </div>

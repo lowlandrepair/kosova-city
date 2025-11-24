@@ -123,7 +123,7 @@ const Admin = () => {
               }`}
             >
               <ScrollText className="h-5 w-5" />
-              <span className="font-medium">Audit Trail</span>
+              <span className="font-medium">{t("admin.auditTrail")}</span>
             </button>
 
             <button
@@ -135,7 +135,7 @@ const Admin = () => {
               }`}
             >
               <Users className="h-5 w-5" />
-              <span className="font-medium">User Management</span>
+              <span className="font-medium">{t("admin.userManagement")}</span>
             </button>
           </nav>
 
@@ -169,8 +169,8 @@ const Admin = () => {
                       {activeTab === "map" && t("admin.liveMap")}
                       {activeTab === "kanban" && t("admin.kanbanBoard")}
                       {activeTab === "analytics" && t("admin.analytics")}
-                      {activeTab === "audit" && "Audit Trail"}
-                      {activeTab === "users" && "Users"}
+                      {activeTab === "audit" && t("admin.auditTrail")}
+                      {activeTab === "users" && t("admin.users")}
                     </span>
                   </span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -233,7 +233,7 @@ const Admin = () => {
                     className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted"
                   >
                     <ScrollText className="h-5 w-5" />
-                    <span className="flex-1">Audit Trail</span>
+                    <span className="flex-1">{t("admin.auditTrail")}</span>
                     <SheetClose asChild>
                       <span role="button" tabIndex={0} className="text-muted-foreground">Select</span>
                     </SheetClose>
@@ -244,7 +244,7 @@ const Admin = () => {
                     className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted"
                   >
                     <Users className="h-5 w-5" />
-                    <span className="flex-1">User Management</span>
+                    <span className="flex-1">{t("admin.userManagement")}</span>
                     <SheetClose asChild>
                       <span role="button" tabIndex={0} className="text-muted-foreground">Select</span>
                     </SheetClose>

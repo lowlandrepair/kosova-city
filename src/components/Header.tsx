@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Header: React.FC = () => {
   const { user, isAdmin } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <header className="w-full z-40 top-0 left-0">
@@ -21,17 +23,17 @@ const Header: React.FC = () => {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-4">
           <NavLink to="/" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">
-            <Home className="inline mr-2 h-4 w-4" /> Home
+            <Home className="inline mr-2 h-4 w-4" /> {t("common.home")}
           </NavLink>
           <NavLink to="/citizen" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">
-            <Users className="inline mr-2 h-4 w-4" /> Citizen
+            <Users className="inline mr-2 h-4 w-4" /> {t("common.citizen")}
           </NavLink>
           <NavLink to="/contact" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">
-            Contact
+            {t("common.contact")}
           </NavLink>
           {isAdmin && (
             <NavLink to="/admin" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">
-              <Shield className="inline mr-2 h-4 w-4" /> Admin
+              <Shield className="inline mr-2 h-4 w-4" /> {t("common.admin")}
             </NavLink>
           )}
         </nav>
@@ -47,7 +49,7 @@ const Header: React.FC = () => {
               </SheetTrigger>
 
               <SheetContent side="right" className="p-6">
-                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <SheetTitle className="sr-only">{t("common.menu")}</SheetTitle>
                 <SheetDescription className="sr-only">Navigation menu</SheetDescription>
                 <div className="flex items-center justify-between mb-6">
                   <div className="inline-flex items-center gap-2">
@@ -62,10 +64,10 @@ const Header: React.FC = () => {
                 </div>
 
                 <nav className="flex flex-col gap-3">
-                  <NavLink to="/" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">Home</NavLink>
-                  <NavLink to="/citizen" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">Citizen</NavLink>
-                  {isAdmin && <NavLink to="/admin" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">Admin</NavLink>}
-                  {!user && <NavLink to="/auth" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">Sign In</NavLink>}
+                  <NavLink to="/" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">{t("common.home")}</NavLink>
+                  <NavLink to="/citizen" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">{t("common.citizen")}</NavLink>
+                  {isAdmin && <NavLink to="/admin" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">{t("common.admin")}</NavLink>}
+                  {!user && <NavLink to="/auth" className="px-3 py-2 rounded hover:bg-accent hover:text-accent-foreground">{t("common.signIn")}</NavLink>}
                 </nav>
               </SheetContent>
             </Sheet>

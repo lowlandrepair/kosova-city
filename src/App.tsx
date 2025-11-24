@@ -14,6 +14,7 @@ import Citizen from "./pages/Citizen";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import Contact from "./pages/Contact";
+import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 import Header from "@/components/Header";
 
@@ -35,6 +36,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/thank-you" element={<ThankYou />} />
                     <Route
                       path="/citizen"
                       element={

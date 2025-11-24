@@ -171,8 +171,14 @@ const CitizenActivity = () => {
                         <div
                           className={`z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
                             step.completed
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-muted bg-background text-muted-foreground"
+                              ? step.label === 'Sent'
+                                ? 'border-yellow-400 bg-yellow-400 text-primary-foreground'
+                                : step.label === 'Received'
+                                ? 'border-orange-400 bg-orange-400 text-primary-foreground'
+                                : step.label === 'Crew Dispatched'
+                                ? 'border-blue-400 bg-blue-400 text-primary-foreground'
+                                : 'border-green-400 bg-green-400 text-primary-foreground'
+                              : 'border-muted bg-background text-muted-foreground'
                           }`}
                         >
                           {step.completed ? (
@@ -193,8 +199,14 @@ const CitizenActivity = () => {
                           <div
                             className={`absolute top-5 h-0.5 transition-colors ${
                               step.completed && steps[stepIndex + 1].completed
-                                ? "bg-primary"
-                                : "bg-muted"
+                                ? step.label === 'Sent' || steps[stepIndex + 1].label === 'Sent'
+                                  ? 'bg-yellow-400'
+                                  : step.label === 'Received' || steps[stepIndex + 1].label === 'Received'
+                                  ? 'bg-orange-400'
+                                  : step.label === 'Crew Dispatched' || steps[stepIndex + 1].label === 'Crew Dispatched'
+                                  ? 'bg-blue-400'
+                                  : 'bg-green-400'
+                                : 'bg-muted'
                             }`}
                             style={{
                               left: `calc(${(stepIndex * 100) / (steps.length - 1)}% + ${50 / (steps.length - 1)}%)`,

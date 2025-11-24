@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { TrendingUp, MapPin, Clock, CheckCircle2, User } from "lucide-react";
 import { useReports } from "@/contexts/ReportContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ interface ReportWithAuthor extends Report {
 const CitizenHome = () => {
   const { reports, getTotalResolved, upvoteReport, userUpvotedReports } = useReports();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [reportsWithAuthors, setReportsWithAuthors] = useState<ReportWithAuthor[]>([]);
   const totalResolved = getTotalResolved();
 
@@ -32,7 +34,7 @@ const CitizenHome = () => {
       
       const reportsWithNames = recentReports.map(report => ({
         ...report,
-        authorName: profileMap.get(report.userId) || "Anonymous User"
+        authorName: profileMap.get(report.userId) || t("citizen.anonymousUser")
       }));
       
       setReportsWithAuthors(reportsWithNames);
@@ -51,10 +53,10 @@ const CitizenHome = () => {
           className="mx-auto max-w-4xl text-center"
         >
           <h1 className="mb-4 text-4xl font-bold md:text-6xl">
-            Report. Resolve. Revitalize.
+            {t("citizen.heroTitle")}
           </h1>
           <p className="mb-8 text-lg opacity-90 md:text-xl">
-            Help make our city better, one report at a time
+            {t("citizen.heroSubtitle")}
           </p>
           
           {/* Community Impact Score */}
@@ -66,8 +68,8 @@ const CitizenHome = () => {
           >
             <TrendingUp className="h-6 w-6" />
             <div className="text-left">
-              <p className="text-sm opacity-90">Community Impact Score</p>
-              <p className="text-2xl font-bold">{totalResolved} Issues Resolved</p>
+              <p className="text-sm opacity-90">{t("citizen.communityImpactScore")}</p>
+              <p className="text-2xl font-bold">{totalResolved} {t("citizen.issuesResolved")}</p>
             </div>
           </motion.div>
         </motion.div>
@@ -88,7 +90,7 @@ const CitizenHome = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{reports.length}</p>
-                <p className="text-sm text-muted-foreground">Total Reports</p>
+                <p className="text-sm text-muted-foreground">{t("citizen.totalReports")}</p>
               </div>
             </div>
           </motion.div>
@@ -107,7 +109,7 @@ const CitizenHome = () => {
                 <p className="text-2xl font-bold">
                   {reports.filter(r => r.status === "In Progress").length}
                 </p>
-                <p className="text-sm text-muted-foreground">In Progress</p>
+                <p className="text-sm text-muted-foreground">{t("citizen.inProgress")}</p>
               </div>
             </div>
           </motion.div>
@@ -124,7 +126,7 @@ const CitizenHome = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalResolved}</p>
-                <p className="text-sm text-muted-foreground">Resolved</p>
+                <p className="text-sm text-muted-foreground">{t("citizen.resolved")}</p>
               </div>
             </div>
           </motion.div>
@@ -140,9 +142,9 @@ const CitizenHome = () => {
             transition={{ delay: 0.4 }}
             className="mb-6"
           >
-            <h2 className="mb-2 text-2xl font-bold">Live Community Map</h2>
+            <h2 className="mb-2 text-2xl font-bold">{t("citizen.liveCommunityMap")}</h2>
             <p className="text-sm text-muted-foreground">
-              See where reports are happening across the city
+              {t("citizen.liveMapDescription")}
             </p>
           </motion.div>
           <motion.div
@@ -158,7 +160,7 @@ const CitizenHome = () => {
       {/* Recent Reports */}
       <section className="px-6 py-8">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-6 text-2xl font-bold">Recent Community Reports</h2>
+          <h2 className="mb-6 text-2xl font-bold">{t("citizen.recentCommunityReports")}</h2>
           <div className="space-y-4">
             {reportsWithAuthors.map((report, index) => (
               <motion.div
@@ -185,10 +187,10 @@ const CitizenHome = () => {
                           ? "bg-warning/10 text-warning"
                           : "bg-muted text-muted-foreground"
                       }`}>
-                        {report.priority} Priority
+                        {t(`report.priority.${report.priority.toLowerCase()}`)} {t("citizen.priority")}
                       </span>
                       <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                        {report.category}
+                        {t(`report.categories.${report.category.toLowerCase().replace(/\s+/g, "")}`)}
                       </span>
                       <span className={`rounded-full px-3 py-1 text-xs font-medium ${
                         report.status === "Resolved"
@@ -197,7 +199,7 @@ const CitizenHome = () => {
                           ? "bg-warning/10 text-warning"
                           : "bg-muted text-muted-foreground"
                       }`}>
-                        {report.status}
+                        {t(`report.status.${report.status.toLowerCase().replace(/\s+/g, "")}`)}
                       </span>
                     </div>
                     <h3 className="mb-2 text-lg font-semibold">{report.title}</h3>
@@ -206,7 +208,7 @@ const CitizenHome = () => {
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />
-                      <span>Location: {report.coordinates.lat.toFixed(4)}, {report.coordinates.lng.toFixed(4)}</span>
+                      <span>{t("citizen.location")}: {report.coordinates.lat.toFixed(4)}, {report.coordinates.lng.toFixed(4)}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-center gap-2">

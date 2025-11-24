@@ -155,19 +155,19 @@ const Index = () => {
             >
               <Badge variant="secondary" className="px-4 py-2 text-sm">
                 <Zap className="mr-2 h-4 w-4" />
-                AI-Powered
+                {t("landing.aiPoweredBadge")}
               </Badge>
               <Badge variant="secondary" className="px-4 py-2 text-sm">
                 <MapPin className="mr-2 h-4 w-4" />
-                GPS Tracking
+                {t("landing.gpsTracking")}
               </Badge>
               <Badge variant="secondary" className="px-4 py-2 text-sm">
                 <Bell className="mr-2 h-4 w-4" />
-                Real-time Updates
+                {t("landing.realTimeUpdates")}
               </Badge>
               <Badge variant="secondary" className="px-4 py-2 text-sm">
                 <Camera className="mr-2 h-4 w-4" />
-                Photo Upload
+                {t("landing.photoUpload")}
               </Badge>
             </motion.div>
 
@@ -206,15 +206,15 @@ const Index = () => {
                   <ul className="mb-6 space-y-2 text-left text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      Interactive map reporting
+                      {t("landing.interactiveMap")}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      AI-enhanced descriptions
+                      {t("landing.aiEnhanced")}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      Real-time status tracking
+                      {t("landing.statusTracking")}
                     </li>
                   </ul>
                   <Button
@@ -243,20 +243,20 @@ const Index = () => {
                     </div>
                     <h2 className="mb-3 text-2xl font-bold">{t("admin.subtitle")}</h2>
                     <p className="mb-6 text-muted-foreground">
-                      Tactical dashboard for city management and workflow optimization
+                      {t("landing.tacticalDashboard")}
                     </p>
                     <ul className="mb-6 space-y-2 text-left text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        Live map with priority pins
+                        {t("landing.liveMapPins")}
                       </li>
                       <li className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        Kanban workflow board
+                        {t("landing.kanbanWorkflow")}
                       </li>
                       <li className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        Analytics & insights
+                        {t("landing.analyticsInsights")}
                       </li>
                     </ul>
                     <Button
@@ -287,7 +287,7 @@ const Index = () => {
               className="text-center"
             >
               <p className="mb-2 text-5xl font-bold text-primary">{reports.length}</p>
-              <p className="text-muted-foreground">Total Reports</p>
+              <p className="text-muted-foreground">{t("landing.totalReports")}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -298,7 +298,7 @@ const Index = () => {
               <p className="mb-2 text-5xl font-bold text-warning">
                 {reports.filter(r => r.status === "In Progress").length}
               </p>
-              <p className="text-muted-foreground">Active Cases</p>
+              <p className="text-muted-foreground">{t("landing.activeCases")}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -307,7 +307,7 @@ const Index = () => {
               className="text-center"
             >
               <p className="mb-2 text-5xl font-bold text-success">{totalResolved}</p>
-              <p className="text-muted-foreground">Resolved Issues</p>
+              <p className="text-muted-foreground">{t("landing.resolvedIssues")}</p>
             </motion.div>
           </div>
         </div>
@@ -322,9 +322,9 @@ const Index = () => {
             transition={{ delay: 1.0 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
+            <h2 className="text-4xl font-bold mb-4">{t("landing.howItWorks")}</h2>
             <p className="text-xl text-muted-foreground">
-              Report issues in just 3 simple steps
+              {t("landing.howItWorksSubtitle")}
             </p>
           </motion.div>
 
@@ -347,9 +347,9 @@ const Index = () => {
                     1
                   </Badge>
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Select Location</h3>
+                <h3 className="text-2xl font-bold mb-4">{t("landing.step1Title")}</h3>
                 <p className="text-muted-foreground">
-                  Click on the interactive map to pinpoint the exact location of the issue
+                  {t("landing.step1Description")}
                 </p>
               </Card>
             </motion.div>
@@ -369,9 +369,9 @@ const Index = () => {
                     2
                   </Badge>
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Describe Issue</h3>
+                <h3 className="text-2xl font-bold mb-4">{t("landing.step2Title")}</h3>
                 <p className="text-muted-foreground">
-                  Add details, photos, and let AI enhance your description for clarity
+                  {t("landing.step2Description")}
                 </p>
               </Card>
             </motion.div>
@@ -391,9 +391,9 @@ const Index = () => {
                     3
                   </Badge>
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Track Progress</h3>
+                <h3 className="text-2xl font-bold mb-4">{t("landing.step3Title")}</h3>
                 <p className="text-muted-foreground">
-                  Monitor your report status from submission to resolution in real-time
+                  {t("landing.step3Description")}
                 </p>
               </Card>
             </motion.div>

@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/auditLogger";
 import { z } from "zod";
 import { motion } from "framer-motion";
-import { LogIn, UserPlus, MapPin } from "lucide-react";
+import { LogIn, UserPlus, MapPin, ArrowLeft } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).max(255),
@@ -145,7 +145,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-background p-4 relative">
+      <Button 
+        variant="ghost" 
+        onClick={() => navigate('/')} 
+        className="absolute top-4 left-4 flex items-center gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t('common.backToHome')}
+      </Button>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

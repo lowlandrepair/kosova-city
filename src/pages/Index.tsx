@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { 
   Users, Shield, TrendingUp, MapPin, ArrowRight, LogIn, Globe, Sun, Moon,
   Zap, Clock, CheckCircle, BarChart3, Bell, Camera, MessageSquare, Award
@@ -9,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useReports } from "@/contexts/ReportContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 // ProfileDropdown intentionally omitted on the home page (kept for admin/citizen portals)
 import {
@@ -20,9 +20,9 @@ import {
 
 const Index = () => {
   const navigate = useNavigate();
+  const { t, language, setLanguage } = useLanguage();
   const { getTotalResolved, reports } = useReports();
   const { user, isAdmin } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const totalResolved = getTotalResolved();
 
@@ -410,20 +410,20 @@ const Index = () => {
             transition={{ delay: 1.4 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4">Powerful Features</h2>
+            <h2 className="text-4xl font-bold mb-4">{t('citizen.powerfulFeatures')}</h2>
             <p className="text-xl text-muted-foreground">
-              Everything you need for effective civic engagement
+              {t('citizen.featuresSubtitle')}
             </p>
           </motion.div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: MapPin, title: "Interactive Maps", desc: "Click-to-report with GPS precision" },
-              { icon: Zap, title: "AI Enhancement", desc: "Auto-improve report descriptions" },
-              { icon: Bell, title: "Smart Notifications", desc: "Stay updated on report progress" },
-              { icon: BarChart3, title: "Analytics Dashboard", desc: "Track city-wide issue trends" },
-              { icon: Shield, title: "Secure Platform", desc: "Enterprise-grade security" },
-              { icon: Award, title: "Community Impact", desc: "Gamified engagement scores" }
+              { icon: MapPin, title: t('citizen.interactiveMaps'), desc: t('citizen.clickToReport') },
+              { icon: Zap, title: t('citizen.aiEnhancement'), desc: t('citizen.autoImprove') },
+              { icon: Bell, title: t('citizen.smartNotifications'), desc: t('citizen.stayUpdated') },
+              { icon: BarChart3, title: t('citizen.analyticsDashboard'), desc: t('citizen.trackTrends') },
+              { icon: Shield, title: t('citizen.securePlatform'), desc: t('citizen.enterpriseSecurity') },
+              { icon: Award, title: t('citizen.communityImpact'), desc: t('citizen.gamifiedEngagement') }
             ].map((feature, idx) => (
               <motion.div
                 key={idx}
@@ -455,24 +455,24 @@ const Index = () => {
           >
             <Card className="p-12 bg-gradient-to-br from-primary/10 to-primary/5 border-2">
               <Award className="h-16 w-16 text-primary mx-auto mb-6" />
-              <h2 className="text-4xl font-bold mb-4">Making Real Impact</h2>
+              <h2 className="text-4xl font-bold mb-4">{t('citizen.makingImpact')}</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join a growing community of engaged citizens working together to improve their neighborhoods
+                {t('citizen.joinCommunity')}
               </p>
               <div className="grid gap-8 md:grid-cols-3 mt-12">
                 <div>
                   <p className="text-5xl font-bold text-primary mb-2">{reports.length}+</p>
-                  <p className="text-muted-foreground">Issues Reported</p>
+                  <p className="text-muted-foreground">{t('citizen.issuesReported')}</p>
                 </div>
                 <div>
                   <p className="text-5xl font-bold text-warning mb-2">
                     {Math.round((totalResolved / (reports.length || 1)) * 100)}%
                   </p>
-                  <p className="text-muted-foreground">Resolution Rate</p>
+                  <p className="text-muted-foreground">{t('citizen.resolutionRate')}</p>
                 </div>
                 <div>
                   <p className="text-5xl font-bold text-success mb-2">&lt; 48h</p>
-                  <p className="text-muted-foreground">Avg Response Time</p>
+                  <p className="text-muted-foreground">{t('citizen.avgResponseTime')}</p>
                 </div>
               </div>
             </Card>
@@ -492,10 +492,10 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 blur-3xl" />
             <div className="relative bg-card/50 backdrop-blur-sm rounded-2xl p-12 border-2 border-primary/20">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Make a Difference?
+                {t('citizen.readyToMakeDifference')}
               </h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join thousands of citizens working together to build a better, more responsive community
+                {t('citizen.joinThousand')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button
